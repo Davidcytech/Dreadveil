@@ -28,6 +28,10 @@ public class vCrouchController : MonoBehaviour
     {
         HandleInput();
         UpdateCrouchAnimation();
+
+        if (isCrouching)
+            controller.isSprinting = false;
+
         DebugCurrentClip();
     }
 
@@ -37,18 +41,18 @@ public class vCrouchController : MonoBehaviour
             ToggleCrouch();
     }
 
-    public virtual void ToggleCrouch()
-    {
-        if (!controller.isGrounded) return;
+public virtual void ToggleCrouch()
+{
+    if (!controller.isGrounded) return;
 
-        isCrouching = !isCrouching;
+    isCrouching = !isCrouching;
 
-        if (isCrouching && controller.isSprinting)
-            controller.isSprinting = false;
+    if (isCrouching && controller.isSprinting)
+        controller.isSprinting = false;
 
-        if (animator)
-            animator.SetBool("IsCrouching", isCrouching);
-    }
+    if (animator)
+        animator.SetBool("IsCrouching", isCrouching);
+}
 
     protected virtual void UpdateCrouchAnimation()
     {
