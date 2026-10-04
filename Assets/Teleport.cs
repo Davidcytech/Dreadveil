@@ -34,10 +34,10 @@ public class Teleport : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.E))
             isAiming = true;
 
-        if (isAiming && Input.GetKey(KeyCode.Q))
+        if (isAiming && Input.GetKey(KeyCode.E))
         {
             hasTarget = TryGetTarget(out currentTarget);
 
@@ -47,7 +47,7 @@ public class Teleport : MonoBehaviour
                 indicator.SetActive(false);
         }
 
-        if (isAiming && Input.GetKeyUp(KeyCode.Q))
+        if (isAiming && Input.GetKeyUp(KeyCode.E))
         {
             isAiming = false;
             indicator.SetActive(false);
