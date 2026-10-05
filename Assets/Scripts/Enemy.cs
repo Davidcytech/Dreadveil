@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public LayerMask whatIsGround;
     public LayerMask whatIsPlayer;
 
+
     // Movimento de patrulha
     public Transform[] patrolPoints;
     private int currentPoint = 0;
@@ -19,15 +20,18 @@ public class Enemy : MonoBehaviour
     public bool alreadyAttacked;
     public GameObject projectile;
 
-    //Estados do inimigo
+    //Estados do inimigo e deteção
     public float sightRange;
     public float attackRange;
     public bool playerInSightRange;
     public bool playerInAttackRange;
+    public LayerMask visionMask;
+    public float angle = 90f;
+    public float crochSight = 0.5f;
 
     private void Awake()
     {
-       player = GameObject.Find("Ch45").transform;
+       player = GameObject.Find("vBasicController_character").transform;
        agent = GetComponent<NavMeshAgent>();
 
     }
@@ -35,12 +39,55 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         // verifica se o jogador esta na area de vi
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
+        playerInSightRange = EnemyWallDetection();
+        playerInAttackRange = playerInSightRange && Vector3.Distance(transform.position, player.position) <= attackRange;
 
         if(!playerInSightRange && !playerInAttackRange) Patrolling();
         if(playerInSightRange && !playerInAttackRange) ChasePlayer();
         if(playerInSightRange && playerInAttackRange) AttackPlayer();
+    }
+
+    private bool EnemyWallDetection()
+    {
+        vCrouchController crouchScript = player.GetComponent<vCrouchController>();
+        bool isCrouching = crouchScript.isCrouching;
+        float currentSightRange;
+
+        if (isCrouching)
+        {
+            currentSightRange = sightRange * crochSight;
+        }
+        else
+        {
+            currentSightRange = sightRange;
+        }
+
+        Vector3 origin = transform.position + Vector3.up * 1.5f;
+        Vector3 target = player.position + Vector3.up * 1f;
+        Vector3 direction = target - origin;
+        float distance = direction.magnitude;
+
+        if (distance > currentSightRange)
+        {
+            return false;
+        }
+
+        float viewAngle = Vector3.Angle(transform.forward, direction);
+
+        if (viewAngle > angle / 2f)
+        {
+            return false;
+        }
+
+        if (Physics.Raycast(origin, direction.normalized, out RaycastHit hit, distance, visionMask))
+        {
+            if (hit.transform == player || hit.transform.IsChildOf(player))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void Patrolling()
