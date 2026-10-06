@@ -1,38 +1,39 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class StealthKillController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Animator playerAnimator;
-    [SerializeField] private CharacterController characterController;
 
     [Header("Takedown Settings")]
     [SerializeField] private float takedownRange = 2.0f;
     [SerializeField] private float enemySearchRadius = 2.5f;
     [SerializeField] private float animationDuration = 2.5f;
+    
+    [Tooltip("Tempo em segundos que o Player demora a dar o golpe após iniciar a animação")]
+    [SerializeField] private float hitImpactDelay = 0.5f; 
 
     [Header("Enemy Detection")]
     [SerializeField] private LayerMask enemyLayer;
 
     private bool isDoingTakedown = false;
 
-    private GameObject currentEnemy;
-
-    private Rigidbody enemyRigidbody;
-    private NavMeshAgent enemyNavMeshAgent;
-    private Animator enemyAnimator;
-
-    private Transform takedownPoint;
+    private MonoBehaviour invectorInput;
+    private MonoBehaviour invectorController;
+    private CharacterController characterController;
 
     private void Awake()
     {
         if (playerAnimator == null)
             playerAnimator = GetComponent<Animator>();
 
-        if (characterController == null)
-            characterController = GetComponent<CharacterController>();
+        invectorInput = GetComponent("vThirdPersonInput") as MonoBehaviour;
+        invectorController = GetComponent("vBasicController") as MonoBehaviour;
+        if (invectorController == null)
+            invectorController = GetComponent("vThirdPersonMotor") as MonoBehaviour;
+
+        characterController = GetComponent<CharacterController>();
     }
 
     private void Update()
@@ -40,7 +41,6 @@ public class StealthKillController : MonoBehaviour
         if (isDoingTakedown)
             return;
 
-        // Botão direito do rato
         if (Input.GetMouseButtonDown(1))
         {
             TryStealthKill();
@@ -65,10 +65,7 @@ public class StealthKillController : MonoBehaviour
             if (enemy == gameObject)
                 continue;
 
-            float distance = Vector3.Distance(
-                transform.position,
-                enemy.transform.position
-            );
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
 
             if (distance < closestDistance)
             {
@@ -77,29 +74,13 @@ public class StealthKillController : MonoBehaviour
             }
         }
 
-        if (closestEnemy == null)
-        {
-            Debug.Log("Nenhum inimigo encontrado para Stealth Kill.");
+        if (closestEnemy == null || closestDistance > takedownRange)
             return;
-        }
 
-        if (closestDistance > takedownRange)
-        {
-            Debug.Log("Inimigo demasiado longe.");
+        StealthKillTarget target = closestEnemy.GetComponent<StealthKillTarget>();
+
+        if (target == null || !target.CanBeKilled)
             return;
-        }
-
-        StealthKillTarget target =
-            closestEnemy.GetComponent<StealthKillTarget>();
-
-        if (target == null)
-        {
-            Debug.LogWarning(
-                "O inimigo encontrado não tem StealthKillTarget!"
-            );
-
-            return;
-        }
 
         StartCoroutine(PerformTakedown(target));
     }
@@ -108,133 +89,61 @@ public class StealthKillController : MonoBehaviour
     {
         isDoingTakedown = true;
 
-        currentEnemy = target.gameObject;
+        if (target.TakedownPoint == null)
+        {
+            Debug.LogError("TakedownPoint não atribuído!");
+            isDoingTakedown = false;
+            yield break;
+        }
 
-        enemyAnimator = target.GetComponent<Animator>();
-        enemyRigidbody = target.GetComponent<Rigidbody>();
-        enemyNavMeshAgent = target.GetComponent<NavMeshAgent>();
-
-        takedownPoint = target.TakedownPoint;
-
+        Animator enemyAnimator = target.GetComponent<Animator>();
         if (enemyAnimator == null)
         {
-            Debug.LogError("O inimigo não tem Animator!");
+            Debug.LogError("Inimigo sem Animator!");
             isDoingTakedown = false;
             yield break;
         }
 
-        if (takedownPoint == null)
+        // 1. DESATIVAR CONTROLO DE MOVIMENTO E IA
+        target.StartTakedown();
+
+        if (invectorInput != null) invectorInput.enabled = false;
+        if (invectorController != null) invectorController.enabled = false;
+        if (characterController != null) characterController.enabled = false;
+
+        // 2. POSICIONAR E ALINHAR O PLAYER
+        transform.position = target.TakedownPoint.position;
+        transform.rotation = target.TakedownPoint.rotation;
+
+        // 3. INICIAR ANIMAÇÃO DO PLAYER
+        playerAnimator.Play("DoBrutalTakedow", 0, 0f);
+
+        // 4. ESPERAR PELO MOMENTO DO IMPACTO
+        yield return new WaitForSeconds(hitImpactDelay);
+
+        // 5. INICIAR ANIMAÇÃO DO INIMIGO NO MOMENTO DO GOLPE
+        enemyAnimator.Play("BrutalTaker", 0, 0f);
+
+        // 6. ESPERAR O RESTO DA DURAÇÃO TOTAL
+        float remainingTime = animationDuration - hitImpactDelay;
+        if (remainingTime > 0)
         {
-            Debug.LogError("TakedownPoint não está atribuído!");
-            isDoingTakedown = false;
-            yield break;
+            yield return new WaitForSeconds(remainingTime);
         }
 
-        // ==============================
-        // 1. DESATIVAR MOVIMENTO DO PLAYER
-        // ==============================
+        // 7. FINALIZAR
+        target.FinishTakedown();
 
-        if (characterController != null)
-        {
-            characterController.enabled = false;
-        }
-
-        // ==============================
-        // 2. PARAR INIMIGO
-        // ==============================
-
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.isStopped = true;
-            enemyNavMeshAgent.updatePosition = false;
-            enemyNavMeshAgent.updateRotation = false;
-        }
-
-        if (enemyRigidbody != null)
-        {
-            enemyRigidbody.isKinematic = true;
-        }
-
-        // ==============================
-        // 3. POSICIONAR PLAYER
-        // ==============================
-
-        transform.position = takedownPoint.position;
-
-        // O Player fica virado para o inimigo
-        Vector3 direction =
-            currentEnemy.transform.position - transform.position;
-
-        direction.y = 0f;
-
-        if (direction != Vector3.zero)
-        {
-            transform.rotation =
-                Quaternion.LookRotation(direction);
-        }
-
-        // ==============================
-        // 4. TOCAR ANIMAÇÕES
-        // ==============================
-
-        playerAnimator.SetTrigger("BrutalTake");
-
-        enemyAnimator.SetTrigger("Knocked");
-
-        Debug.Log("STEALTH TAKEDOWN!");
-
-        // ==============================
-        // 5. ESPERAR ANIMAÇÃO
-        // ==============================
-
-        yield return new WaitForSeconds(animationDuration);
-
-        // ==============================
-        // 6. FINALIZAR
-        // ==============================
-
-        FinishTakedown();
-    }
-
-    private void FinishTakedown()
-    {
-        // Reativar CharacterController
-        if (characterController != null)
-        {
-            characterController.enabled = true;
-        }
-
-        // Reativar NavMeshAgent
-        if (enemyNavMeshAgent != null)
-        {
-            enemyNavMeshAgent.updatePosition = true;
-            enemyNavMeshAgent.updateRotation = true;
-            enemyNavMeshAgent.isStopped = false;
-        }
-
-        if (enemyRigidbody != null)
-        {
-            enemyRigidbody.isKinematic = false;
-        }
-
-        currentEnemy = null;
-        enemyAnimator = null;
-        enemyRigidbody = null;
-        enemyNavMeshAgent = null;
-        takedownPoint = null;
+        if (invectorInput != null) invectorInput.enabled = true;
+        if (invectorController != null) invectorController.enabled = true;
+        if (characterController != null) characterController.enabled = true;
 
         isDoingTakedown = false;
-
-        Debug.Log("Stealth Takedown terminado.");
     }
 
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            enemySearchRadius
-        );
+        Gizmos.DrawWireSphere(transform.position, enemySearchRadius);
     }
 }
