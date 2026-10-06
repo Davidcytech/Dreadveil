@@ -5,6 +5,7 @@
   </component>
   <component name="BackendCodeEditorMiscSettings">
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="9" type="long" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
   </component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
@@ -30,10 +31,10 @@
   <component name="MacroExpansionManager">
     <option name="directoryName" value="Nx0Lh9g8" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3K6Mhz5Ak0gJrBF38tLGid4Fhn8" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -53,7 +54,7 @@
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/home/torch/Documents/GitHub/Dreadveil",
+    "last_opened_file_path": "/home/torch/CLionProjects/HTTPServerC",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -61,10 +62,10 @@
     "nodejs_package_manager_path": "npm"
   }
 }]]></component>
-  <component name="SelectedDebugProfileService"><![CDATA[{
-  "profileIdByStamp": [],
-  "modificationCount": 1
-}]]></component>
+  <component name="SelectedDebugProfileService">{
+  &quot;profileIdByStamp&quot;: [],
+  &quot;modificationCount&quot;: 1
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="f5401330-e3cc-43ef-a1e6-de5284a22a09" name="Changes" comment="" />
