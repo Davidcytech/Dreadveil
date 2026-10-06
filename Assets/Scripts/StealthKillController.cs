@@ -10,9 +10,13 @@ public class StealthKillController : MonoBehaviour
     [SerializeField] private float takedownRange = 2.0f;
     [SerializeField] private float enemySearchRadius = 2.5f;
     [SerializeField] private float animationDuration = 2.5f;
-    
-    [Tooltip("Tempo em segundos que o Player demora a dar o golpe após iniciar a animação")]
-    [SerializeField] private float hitImpactDelay = 0.5f; 
+
+    [Header("Hit Delays (Sincronização)")]
+    [Tooltip("Atraso do impacto para o Abate Brutal (Botão Direito)")]
+    [SerializeField] private float brutalHitDelay = 0.5f;
+
+    [Tooltip("Atraso do impacto para o Abate Stealth (Botão Esquerdo)")]
+    [SerializeField] private float stealthHitDelay = 0.3f;
 
     [Header("Enemy Detection")]
     [SerializeField] private LayerMask enemyLayer;
@@ -41,13 +45,19 @@ public class StealthKillController : MonoBehaviour
         if (isDoingTakedown)
             return;
 
+        // Botão Direito do Rato -> Abate Brutal
         if (Input.GetMouseButtonDown(1))
         {
-            TryStealthKill();
+            TryStealthKill("DoBrutalTakedow", "BrutalTaker", brutalHitDelay);
+        }
+        // Botão Esquerdo do Rato -> Abate Furtivo
+        else if (Input.GetMouseButtonDown(0))
+        {
+            TryStealthKill("DoStealthTakedow", "StealthTaker", stealthHitDelay);
         }
     }
 
-    private void TryStealthKill()
+    private void TryStealthKill(string playerStateName, string enemyStateName, float hitDelay)
     {
         Collider[] enemies = Physics.OverlapSphere(
             transform.position,
@@ -82,10 +92,10 @@ public class StealthKillController : MonoBehaviour
         if (target == null || !target.CanBeKilled)
             return;
 
-        StartCoroutine(PerformTakedown(target));
+        StartCoroutine(PerformTakedown(target, playerStateName, enemyStateName, hitDelay));
     }
 
-    private IEnumerator PerformTakedown(StealthKillTarget target)
+    private IEnumerator PerformTakedown(StealthKillTarget target, string playerStateName, string enemyStateName, float hitDelay)
     {
         isDoingTakedown = true;
 
@@ -116,16 +126,16 @@ public class StealthKillController : MonoBehaviour
         transform.rotation = target.TakedownPoint.rotation;
 
         // 3. INICIAR ANIMAÇÃO DO PLAYER
-        playerAnimator.Play("DoBrutalTakedow", 0, 0f);
+        playerAnimator.Play(playerStateName, 0, 0f);
 
         // 4. ESPERAR PELO MOMENTO DO IMPACTO
-        yield return new WaitForSeconds(hitImpactDelay);
+        yield return new WaitForSeconds(hitDelay);
 
-        // 5. INICIAR ANIMAÇÃO DO INIMIGO NO MOMENTO DO GOLPE
-        enemyAnimator.Play("BrutalTaker", 0, 0f);
+        // 5. INICIAR ANIMAÇÃO DO INIMIGO
+        enemyAnimator.Play(enemyStateName, 0, 0f);
 
         // 6. ESPERAR O RESTO DA DURAÇÃO TOTAL
-        float remainingTime = animationDuration - hitImpactDelay;
+        float remainingTime = animationDuration - hitDelay;
         if (remainingTime > 0)
         {
             yield return new WaitForSeconds(remainingTime);

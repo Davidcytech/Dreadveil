@@ -1632,7 +1632,8 @@ MonoBehaviour:
   takedownRange: 2
   enemySearchRadius: 2.5
   animationDuration: 4
-  hitImpactDelay: 0.7
+  brutalHitDelay: 0.7
+  stealthHitDelay: 0.1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
