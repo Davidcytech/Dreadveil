@@ -1855,9 +1855,10 @@ MonoBehaviour:
   playerAnimator: {fileID: 163998208}
   takedownRange: 2
   enemySearchRadius: 2.5
-  animationDuration: 4
   brutalHitDelay: 0.7
+  brutalAnimationDuration: 4
   stealthHitDelay: 0.1
+  stealthAnimationDuration: 6
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -3899,7 +3900,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
   m_PrefabInstance: {fileID: 1291417835}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &394389619
+--- !u!114 &394389621
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3908,9 +3909,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 394389608}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd0c79baab289504c9afcf236afd97f7, type: 3}
+  m_Script: {fileID: 11500000, guid: 2958e831e449b1c4e9a6d3d8462dbb9e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TakedownVictim
+  m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
+  takedownPoint: {fileID: 1264321616}
 --- !u!1 &399701813
 GameObject:
   m_ObjectHideFlags: 0
@@ -12905,7 +12907,7 @@ PrefabInstance:
       addedObject: {fileID: 394389616}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 394389619}
+      addedObject: {fileID: 394389621}
   m_SourcePrefab: {fileID: 100100000, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
 --- !u!1 &1311744956 stripped
 GameObject:

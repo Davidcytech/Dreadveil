@@ -3,6 +3,8 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    private Animator anim;
+
     public NavMeshAgent agent;
 
     public Transform player;
@@ -34,10 +36,18 @@ public class Enemy : MonoBehaviour
        player = GameObject.Find("vBasicController_character").transform;
        agent = GetComponent<NavMeshAgent>();
 
+       anim = GetComponent<Animator>();
+
     }
 
     private void Update()
     {
+        if (anim != null && agent != null)
+    {
+        float currentSpeed = agent.velocity.magnitude;
+        anim.SetBool("IsMoving", currentSpeed > 0.1f);   // Se usares a variável bool "IsMoving"
+    }
+    
         // verifica se o jogador esta na area de vi
         playerInSightRange = EnemyWallDetection();
         playerInAttackRange = playerInSightRange && Vector3.Distance(transform.position, player.position) <= attackRange;
