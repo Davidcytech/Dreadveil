@@ -4,6 +4,7 @@ public class Door : MonoBehaviour
 {
     public float openAngle = 90f;
     public float openSpeed = 3f;
+    public bool isLocked = false;
 
     private bool isOpen = false;
     private Quaternion closedRotation;
@@ -12,6 +13,7 @@ public class Door : MonoBehaviour
     void Start()
     {
         closedRotation = transform.rotation;
+
         openRotation = Quaternion.Euler(
             transform.eulerAngles + new Vector3(0, openAngle, 0)
         );
@@ -33,7 +35,10 @@ public class Door : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            isOpen = true;
+            if (!isLocked)
+            {
+                isOpen = true;
+            }
         }
     }
 }
