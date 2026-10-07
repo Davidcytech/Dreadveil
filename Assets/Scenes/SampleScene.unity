@@ -3286,13 +3286,13 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 1524550545}
   - {fileID: 216510942}
-  attackCooldown: 0
+  attackCooldown: 5
   alreadyAttacked: 0
-  projectile: {fileID: 0}
+  projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   sightRange: 4
   attackRange: 2
   playerInSightRange: 0
-  playerInAttackRange: 1
+  playerInAttackRange: 0
   visionMask:
     serializedVersion: 2
     m_Bits: 8

@@ -123,6 +123,39 @@ public class Enemy : MonoBehaviour
         Vector3 direction = player.position - transform.position;
         direction.y = 0f;
 
+        if(direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation,targetRotation,Time.deltaTime * 10f);
+        }
+
+        if(!alreadyAttacked)
+        {
+            GameObject bullet = Instantiate( projectile, transform.position + transform.forward * 1.2f + Vector3.up, Quaternion.LookRotation(direction));
+            Rigidbody rb = bullet.GetComponent<Rigidbody>();
+
+            if (rb != null)
+            {
+                Vector3 shootDirection = (player.position - bullet.transform.position).normalized;
+                rb.AddForce(transform.forward * 10f, ForceMode.Impulse);
+            }
+        
+            alreadyAttacked = true;
+             Invoke(nameof(ResetAttack), attackCooldown);
+        }
+    }
+
+    private void ResetAttack()
+    {
+        alreadyAttacked = false;
+    }
+
+
+
+
+}
+
+
        /* if(!alreadyAttacked)
         {
             Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
@@ -133,12 +166,3 @@ public class Enemy : MonoBehaviour
             Invoke(nameof(ResetAttack), attackCooldown);
 
         }*/
-
-    }
-
-    private void ResetAttack()
-    {
-        alreadyAttacked = false;
-    }
-
-}
