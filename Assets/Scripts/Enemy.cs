@@ -31,6 +31,12 @@ public class Enemy : MonoBehaviour
     public float angle = 90f;
     public float crochSight = 0.5f;
 
+    // Audição
+    private bool investigating;
+    private Vector3 soundPosition;
+    public float searchTime = 4f;     // tempo a procurar quando chega ao local
+    private float searchTimer;
+
     private void Awake()
     {
        player = GameObject.Find("vBasicController_character").transform;
@@ -52,9 +58,54 @@ public class Enemy : MonoBehaviour
         playerInSightRange = EnemyWallDetection();
         playerInAttackRange = playerInSightRange && Vector3.Distance(transform.position, player.position) <= attackRange;
 
-        if(!playerInSightRange && !playerInAttackRange) Patrolling();
-        if(playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if(playerInSightRange && playerInAttackRange) AttackPlayer();
+        if (playerInSightRange)
+        {
+            investigating = false;              // viu o jogador, cancela a investigação
+            if (playerInAttackRange) AttackPlayer();
+            else ChasePlayer();
+        }
+        else if (investigating)
+        {
+            Investigate();
+        }
+        else
+        {
+            Patrolling();
+        }
+    }
+
+    // Chamado pelo alarme (ou por qualquer outro som)
+	public void HearSound(Vector3 position)
+	{
+	    if (playerInSightRange) return;
+
+	    // raio pequeno, para não saltar para outra zona
+	    if (!NavMesh.SamplePosition(position, out NavMeshHit navHit, 1.5f, NavMesh.AllAreas))
+		return;
+
+	    // só aceita se existir um caminho completo até lá
+	    NavMeshPath path = new NavMeshPath();
+	    if (!agent.CalculatePath(navHit.position, path) || path.status != NavMeshPathStatus.PathComplete)
+	    {
+		Debug.LogWarning(name + ": sem caminho completo até ao alarme", this);
+		return;
+	    }
+
+	    soundPosition = navHit.position;
+	    investigating = true;
+	    searchTimer = searchTime;
+	}
+
+    private void Investigate()
+    {
+        agent.SetDestination(soundPosition);
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
+        {
+            // chegou ao local: espera um pouco e volta à patrulha
+            searchTimer -= Time.deltaTime;
+            if (searchTimer <= 0f) investigating = false;
+        }
     }
 
     private bool EnemyWallDetection()
