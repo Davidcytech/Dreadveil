@@ -31,6 +31,7 @@ public class Alarm : MonoBehaviour
             Enemy enemy = c.GetComponentInParent<Enemy>();
             if (enemy != null) enemy.HearSound(transform.position);
         }
+        triggered = false;
     }
 
     private void OnDrawGizmosSelected()
