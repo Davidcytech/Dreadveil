@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
     public GameObject projectile;
 
     //Estados do inimigo e deteção
+    private bool reachedSound;
     public float sightRange;
     public float attackRange;
     public bool playerInSightRange;
@@ -94,19 +95,43 @@ public class Enemy : MonoBehaviour
 	    soundPosition = navHit.position;
 	    investigating = true;
 	    searchTimer = searchTime;
+        agent.isStopped = false;
+        reachedSound = false;
 	}
+
 
     private void Investigate()
     {
+        if (reachedSound)
+        {
+            searchTimer -= Time.deltaTime;
+
+            if (searchTimer <= 0f)
+            {
+                investigating = false;
+                reachedSound = false;
+                agent.isStopped = false;
+
+                if (patrolPoints.Length > 0)
+                    agent.SetDestination(patrolPoints[currentPoint].position);
+            }
+
+            return;
+        }
+
+        agent.isStopped = false;
         agent.SetDestination(soundPosition);
 
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
+        if (!agent.pathPending &&
+            agent.hasPath &&
+            agent.remainingDistance <= agent.stoppingDistance + 2f)
         {
-            // chegou ao local: espera um pouco e volta à patrulha
-            searchTimer -= Time.deltaTime;
-            if (searchTimer <= 0f) investigating = false;
+            reachedSound = true;
+            searchTimer = searchTime;
+            agent.isStopped = true;
         }
     }
+
 
     private bool EnemyWallDetection()
     {
