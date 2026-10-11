@@ -3,11 +3,13 @@ using UnityEngine;
 public class Teleport : MonoBehaviour
 {
     [SerializeField] private Camera playerCamera;
+    [SerializeField] private Player playerStats;
     [SerializeField] private float teleportDistance = 20f;
     [SerializeField] private float maxGroundDistance = 30f;
     [SerializeField] private LayerMask teleportMask = ~0;
     [SerializeField] private GameObject indicatorPrefab;
     [SerializeField] private float spinSpeed = 45f;
+    [SerializeField] private float energyCost = 50f;
 
     private Rigidbody rb;
     private Collider ownCollider;
@@ -26,13 +28,25 @@ public class Teleport : MonoBehaviour
         if (playerCamera == null)
             playerCamera = Camera.main;
 
+        if (playerStats == null)
+            playerStats = GetComponentInParent<Player>();
+
+        if (playerStats == null)
+            playerStats = GetComponentInChildren<Player>();
+
         CreateIndicator();
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
-            isAiming = true;
+        {
+            if (playerStats != null && playerStats.energy >= energyCost)
+            {
+                isAiming = true;
+                hasTarget = false;
+            }
+        }
 
         if (isAiming && Input.GetKey(KeyCode.E))
         {
@@ -40,17 +54,21 @@ public class Teleport : MonoBehaviour
 
             if (hasTarget)
                 ShowIndicator(currentTarget);
-            else
+            else if (indicator != null)
                 indicator.SetActive(false);
         }
 
         if (isAiming && Input.GetKeyUp(KeyCode.E))
         {
             isAiming = false;
-            indicator.SetActive(false);
+
+            if (indicator != null)
+                indicator.SetActive(false);
 
             if (hasTarget)
                 ApplyPosition(currentTarget);
+
+            hasTarget = false;
         }
     }
 
@@ -236,6 +254,9 @@ public class Teleport : MonoBehaviour
 
     private void ApplyPosition(Vector3 position)
     {
+        if (playerStats == null || !playerStats.TryUseEnergy(energyCost))
+            return;
+
         if (rb != null)
         {
             rb.position = position;

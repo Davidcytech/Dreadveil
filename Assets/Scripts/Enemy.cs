@@ -4,6 +4,7 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     private Animator anim;
+    
 
     public NavMeshAgent agent;
 
@@ -23,6 +24,8 @@ public class Enemy : MonoBehaviour
     public GameObject projectile;
 
     //Estados do inimigo e deteção
+    public bool inhibitsPlayerEnergy;
+    public float energyInhibitionDuration = 5f;
     private bool reachedSound;
     public float sightRange;
     public float attackRange;
@@ -31,7 +34,7 @@ public class Enemy : MonoBehaviour
     public LayerMask visionMask;
     public float angle = 90f;
     public float crochSight = 0.5f;
-
+    private bool wasPlayerInSightRange;
     // Audição
     private bool investigating;
     private Vector3 soundPosition;
@@ -54,10 +57,22 @@ public class Enemy : MonoBehaviour
         float currentSpeed = agent.velocity.magnitude;
         anim.SetBool("IsMoving", currentSpeed > 0.1f);   // Se usares a variável bool "IsMoving"
     }
-    
-        // verifica se o jogador esta na area de vi
+
+
         playerInSightRange = EnemyWallDetection();
-        playerInAttackRange = playerInSightRange && Vector3.Distance(transform.position, player.position) <= attackRange;
+
+        if (playerInSightRange && !wasPlayerInSightRange && inhibitsPlayerEnergy)
+        {
+            Player playerScript = player.GetComponent<Player>();
+
+            if (playerScript != null)
+                playerScript.InhibitEnergy(energyInhibitionDuration);
+        }
+
+        wasPlayerInSightRange = playerInSightRange;
+
+        playerInAttackRange = playerInSightRange &&
+            Vector3.Distance(transform.position, player.position) <= attackRange;
 
         if (playerInSightRange)
         {
