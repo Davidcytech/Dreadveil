@@ -1,6 +1,7 @@
 
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour
 {
     public float health = 100f;
@@ -46,7 +47,8 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             Debug.Log("oof");
-            Destroy(gameObject);
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
     //redução de energia 
