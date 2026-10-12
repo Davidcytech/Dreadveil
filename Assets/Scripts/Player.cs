@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             Debug.Log("oof");
+            Destroy(gameObject);
         }
     }
     //redução de energia 

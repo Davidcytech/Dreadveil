@@ -1,77 +1,103 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Radar : MonoBehaviour
 {
-    public float radarRange = 20f;
-    public float energyCost = 25f;
-    public float highlight = 3f;
+    public Player player;
+    public Material highlightMaterial; // tem de ser o shader super bacano e especial que eu criei
+    public LayerMask enemyLayer;
+    public float radarRadius = 25f;
+    public float highlightDuration = 4f;
+    public float cooldown = 8f;
+    public float energyCost = 20f;
+    private float nextUseTime;
+    private bool active;
 
-    public LayerMask enemy;
-    public Material highlightMaterial;
-
-    private void Start()
+    private void Awake()
     {
-
+       if (player == null) player = GetComponent<Player>();
     }
 
     private void Update()
     {
-      if (Input.GetKeyDown(KeyCode.R))
-      {
-        ActivateRadar();
-      }
+         if (Input.GetKeyDown(KeyCode.Q))
+        {
+            ActivateRadar();
+        }
     }
 
     public void ActivateRadar()
     {
-        Player player = GetComponent<Player>();
-
-        if(player == null){
+        if (player == null || highlightMaterial == null)
+        {
+            return;
+        }
+        if(active || Time.time < nextUseTime)
+        {
             return;
         }
 
-        if(player.energy < energyCost)
+         if (player.energy < energyCost)
         {
-            //Teste para já, depois metemos a barra :0
-            Debug.Log("Energia insuficiente");
+            Debug.Log("Energia insuficiente para o radar");
             return;
         }
 
         player.energy -= energyCost;
-
-        Collider[] enemies = Physics.OverlapSphere(transform.position,radarRange,enemy);
-
-        foreach (Collider enemy in enemies)
-        {
-            Renderer[] renderers = enemy.GetComponentsInChildren<Renderer>();
-
-            foreach(Renderer renderer in renderers)
-            {
-                Material originalMaterial = renderer.material;
-                renderer.material = highlightMaterial;
-                StartCoroutine(RemoveHighlight(renderer,originalMaterial,highlight));
-            }
-        }
-
-
+        nextUseTime = Time.time + cooldown;
+        StartCoroutine(RadarFunction());
     }
 
-    
-    private System.Collections.IEnumerator RemoveHighlight(Renderer renderer,Material originalMaterial,float duration)
+    private IEnumerator RadarFunction()
     {
-      yield return new WaitForSeconds(duration);
+        active = true;
+        Collider[] hits = Physics.OverlapSphere(transform.position, radarRadius,enemyLayer);
 
-        if (renderer != null)
+        // aqui sao guardados os materiais originais para depois voltarem a ser pintados
+        var originals = new Dictionary<Renderer, Material[]>();
+
+        foreach ( Collider col in hits)
         {
-            renderer.material = originalMaterial;
+            Enemy enemy = col.GetComponentInParent<Enemy>();
+            Transform root = enemy != null ? enemy.transform : col.transform;
+
+            foreach (Renderer r in root.GetComponentsInChildren<Renderer>())
+            {
+                if (originals.ContainsKey(r)) continue; // o contain é para evitar repetições
+                Material[] original = r.sharedMaterials;
+                originals[r] = original;
+
+                // Copia os materiais e acrescenta o do radar no fim, assim se ele estiver atras de um objeto tem highlight e se nao estiver fica normal
+                Material[] withHighlight = new Material[original.Length + 1];
+                original.CopyTo(withHighlight, 0);
+                withHighlight[original.Length] = highlightMaterial;
+                r.sharedMaterials = withHighlight;
+            }
         }
+         yield return new WaitForSeconds(highlightDuration);
+
+        // restaura os materiais depois do radar
+        foreach (var pair in originals)
+        {
+            if (pair.Key != null) pair.Key.sharedMaterials = pair.Value;
+        }
+
+        active = false;
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, radarRange);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, radarRadius);
     }
 
-}
+    }
+
+
+
+
+
+
+
+
