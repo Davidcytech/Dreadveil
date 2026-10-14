@@ -1,7 +1,7 @@
 
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using System.Collections;
+
 public class Player : MonoBehaviour
 {
     public float health = 100f;
@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
     public float regenerationInterval = 5f;
 
     private float regenerationTimer;
+
+
+
 
     private void Update()
     {
@@ -42,13 +45,13 @@ public class Player : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+       
 
         if (health <= 0f)
         {
             health = 0f;
             Debug.Log("oof");
-
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+          //  Destroy(gameObject);
         }
     }
     //redução de energia 

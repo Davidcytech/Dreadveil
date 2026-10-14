@@ -250,8 +250,31 @@ public class Enemy : MonoBehaviour
     {
         alreadyAttacked = false;
     }
+/*    private void OnDrawGizmosSelected()
+{
+    Vector3 origin = transform.position + Vector3.up * 1.5f;
 
+    // Alcance de visão (amarelo)
+    Gizmos.color = Color.yellow;
+    Gizmos.DrawWireSphere(transform.position, sightRange);
 
+    // Alcance de visão quando o player está agachado (laranja)
+    Gizmos.color = new Color(1f, 0.5f, 0f);
+    Gizmos.DrawWireSphere(transform.position, sightRange * crochSight);
+
+    // Alcance de ataque (vermelho)
+    Gizmos.color = Color.red;
+    Gizmos.DrawWireSphere(transform.position, attackRange);
+
+    // Cone de visão (ciano): duas linhas nos limites do ângulo + linha central
+    Gizmos.color = Color.cyan;
+    Vector3 left = Quaternion.Euler(0f, -angle / 2f, 0f) * transform.forward;
+    Vector3 right = Quaternion.Euler(0f, angle / 2f, 0f) * transform.forward;
+
+    Gizmos.DrawLine(origin, origin + left * sightRange);
+    Gizmos.DrawLine(origin, origin + right * sightRange);
+    Gizmos.DrawLine(origin, origin + transform.forward * sightRange);
+}*/
 
 
 }
