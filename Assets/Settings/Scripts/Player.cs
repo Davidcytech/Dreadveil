@@ -9,21 +9,9 @@ public class Player : MonoBehaviour
     public float maxEnergy = 100f;
     public float energyPerRegeneration = 25f;
     public float regenerationInterval = 5f;
+    private bool dead;
 
     private float regenerationTimer;
-
-    private bool dead;
-    public GameObject gameOverPanel;
-
-
-    private void Start()
-    {
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(false);
-        }
-    }
-
 
     private void Update()
     {
@@ -62,11 +50,9 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             dead = true;
-            if (gameOverPanel != null)
-            {
-              gameOverPanel.SetActive(true);
-            }
-            Debug.Log("oof");
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
           //  Destroy(gameObject);
         }
     }
@@ -94,5 +80,21 @@ public class Player : MonoBehaviour
         energy = savedEnergy;
         energyInhibited = false;
         inhibitionCoroutine = null;
+    }
+        private void OnGUI()
+    {
+        if (!dead) return;
+
+        Color old = GUI.color;
+        GUI.color = new Color(0f, 0f, 0f, 0.85f);
+        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+        GUI.color = old;
+
+        GUIStyle style = new GUIStyle(GUI.skin.label);
+        style.fontSize = 64;
+        style.alignment = TextAnchor.MiddleCenter;
+        style.normal.textColor = Color.red;
+
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "GAME OVER", style);
     }
 }
