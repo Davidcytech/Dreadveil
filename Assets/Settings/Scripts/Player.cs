@@ -1,6 +1,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour
         {
             health = 0f;
             dead = true;
+            StartCoroutine(RestartGame());
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -81,7 +83,16 @@ public class Player : MonoBehaviour
         energyInhibited = false;
         inhibitionCoroutine = null;
     }
-        private void OnGUI()
+
+private IEnumerator RestartGame()
+    {
+        yield return new WaitForSecondsRealtime(3f);
+
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    private void OnGUI()
     {
         if (!dead) return;
 
