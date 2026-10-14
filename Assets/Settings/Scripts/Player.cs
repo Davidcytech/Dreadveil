@@ -95,6 +95,6 @@ public class Player : MonoBehaviour
         style.alignment = TextAnchor.MiddleCenter;
         style.normal.textColor = Color.red;
 
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "GAME OVER", style);
+        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Capturado", style);
     }
 }
