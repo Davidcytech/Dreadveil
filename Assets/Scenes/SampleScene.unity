@@ -7196,7 +7196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 26003949fe554f4499856d8fecd423ce, type: 3}
       propertyPath: m_Name
-      value: Refem (1)
+      value: Refem
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
