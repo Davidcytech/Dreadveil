@@ -12,7 +12,17 @@ public class Player : MonoBehaviour
 
     private float regenerationTimer;
 
+    private bool dead;
+    public GameObject gameOverPanel;
 
+
+    private void Start()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
+    }
 
 
     private void Update()
@@ -44,12 +54,18 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (dead) return;
         health -= damage;
-       
+        
 
         if (health <= 0f)
         {
             health = 0f;
+            dead = true;
+            if (gameOverPanel != null)
+            {
+              gameOverPanel.SetActive(true);
+            }
             Debug.Log("oof");
           //  Destroy(gameObject);
         }
