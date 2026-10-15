@@ -92,7 +92,7 @@ private IEnumerator RestartGame()
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    private void OnGUI()
+    /*private void OnGUI()
     {
         if (!dead) return;
 
@@ -107,5 +107,5 @@ private IEnumerator RestartGame()
         style.normal.textColor = Color.red;
 
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Capturado", style);
-    }
+    }*/
 }
