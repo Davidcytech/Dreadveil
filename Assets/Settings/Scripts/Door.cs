@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class Door : MonoBehaviour
@@ -5,6 +6,10 @@ public class Door : MonoBehaviour
     public float openAngle = 90f;
     public float openSpeed = 3f;
     public bool isLocked = false;
+
+    [Header("Som")]
+    public AudioSource doorSound;
+    public float soundRange = 12f;
 
     private bool isOpen = false;
     private Quaternion closedRotation;
@@ -17,6 +22,9 @@ public class Door : MonoBehaviour
         openRotation = Quaternion.Euler(
             transform.eulerAngles + new Vector3(0, openAngle, 0)
         );
+
+        if (doorSound == null)
+            doorSound = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -35,10 +43,34 @@ public class Door : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (!isLocked)
+            if (!isLocked && !isOpen)
             {
                 isOpen = true;
+
+                if (doorSound != null)
+                    doorSound.Play();
+
+                NotifyEnemies();
             }
+        }
+    }
+
+    private void NotifyEnemies()
+    {
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+
+        foreach (Enemy enemy in enemies)
+        {
+            if (enemy == null)
+                continue;
+
+            float distance = Vector3.Distance(
+                transform.position,
+                enemy.transform.position
+            );
+
+            if (distance <= soundRange)
+                enemy.HearSound(transform.position);
         }
     }
 }

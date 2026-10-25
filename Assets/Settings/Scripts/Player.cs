@@ -14,8 +14,39 @@ public class Player : MonoBehaviour
 
     private float regenerationTimer;
 
+    [Header("Passos")]
+    public AudioSource footstepsAudio;
+    public float stepInterval = 0.45f;
+
+    [Header("Alcance Sonoro")]
+    public float walkingSoundRange = 3f;
+    public float runningSoundRange = 8f;
+
+    private float stepTimer;
+    private bool footstepsBlocked;
+    private Invector.vCharacterController.vThirdPersonController playerController;
+
+    private void Start()
+    {
+        playerController = GetComponent<Invector.vCharacterController.vThirdPersonController>();
+        footstepsBlocked = false;
+    }
+
     private void Update()
     {
+        if (dead || footstepsBlocked)
+        {
+            if (footstepsAudio != null)
+            {
+                footstepsAudio.Stop();
+                footstepsAudio.time = 0f;
+            }
+
+            return;
+        }
+
+        HandleFootsteps();
+
         if (energy >= maxEnergy)
         {
             energy = maxEnergy;
@@ -32,6 +63,65 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void HandleFootsteps()
+    {
+        if (footstepsAudio == null || playerController == null)
+            return;
+
+        vCrouchController crouchController = GetComponent<vCrouchController>();
+
+        bool isCrouching = crouchController != null && crouchController.isCrouching;
+        bool isMoving = playerController.input.magnitude > 0.1f;
+        bool isGrounded = playerController.isGrounded;
+
+        if (isCrouching || !isMoving || !isGrounded)
+        {
+            stepTimer = 0f;
+
+            if (footstepsAudio.isPlaying)
+            {
+                footstepsAudio.Stop();
+                footstepsAudio.time = 0f;
+            }
+
+            return;
+        }
+
+        stepTimer += Time.deltaTime;
+
+        if (stepTimer >= stepInterval)
+        {
+            if (footstepsAudio.clip != null && !footstepsAudio.isPlaying)
+                footstepsAudio.Play();
+
+            float soundRange = playerController.isSprinting
+                ? runningSoundRange
+                : walkingSoundRange;
+
+            AlertEnemies(soundRange);
+
+            stepTimer = 0f;
+        }
+    }
+
+    private void AlertEnemies(float soundRange)
+    {
+        Enemy[] enemies = FindObjectsOfType<Enemy>();
+
+        foreach (Enemy enemy in enemies)
+        {
+            float distance = Vector3.Distance(
+                transform.position,
+                enemy.transform.position
+            );
+
+            if (distance <= soundRange)
+            {
+                enemy.HearSound(transform.position);
+            }
+        }
+    }
+
     public bool TryUseEnergy(float amount)
     {
         if (energy < amount)
@@ -45,20 +135,28 @@ public class Player : MonoBehaviour
     {
         if (dead) return;
         health -= damage;
-        
 
         if (health <= 0f)
         {
             health = 0f;
             dead = true;
+            footstepsBlocked = true;
+
+            if (footstepsAudio != null)
+            {
+                footstepsAudio.Stop();
+                footstepsAudio.time = 0f;
+            }
+
             StartCoroutine(RestartGame());
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-          //  Destroy(gameObject);
+            //  Destroy(gameObject);
         }
     }
-    //redução de energia 
+
+    //redução de energia
     private bool energyInhibited;
     private Coroutine inhibitionCoroutine;
 
@@ -84,7 +182,7 @@ public class Player : MonoBehaviour
         inhibitionCoroutine = null;
     }
 
-private IEnumerator RestartGame()
+    private IEnumerator RestartGame()
     {
         yield return new WaitForSecondsRealtime(3f);
 
@@ -92,6 +190,7 @@ private IEnumerator RestartGame()
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
     /*private void OnGUI()
     {
         if (!dead) return;
