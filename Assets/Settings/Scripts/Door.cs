@@ -7,7 +7,7 @@ public class Door : MonoBehaviour
     public float openSpeed = 3f;
     public bool isLocked = false;
 
-    [Header("Som")]
+    
     public AudioSource doorSound;
     public float soundRange = 12f;
 
