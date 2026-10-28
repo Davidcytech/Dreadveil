@@ -2571,7 +2571,7 @@ MonoBehaviour:
   maxEnergy: 100
   energyPerRegeneration: 25
   regenerationInterval: 5
-  footstepsAudio: {fileID: 0}
+  footstepsAudio: {fileID: 163998216}
   stepInterval: 0.45
   walkingSoundRange: 3
   runningSoundRange: 8
