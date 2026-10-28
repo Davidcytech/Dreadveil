@@ -55,7 +55,7 @@ public class Enemy : MonoBehaviour
         if (anim != null && agent != null)
     {
         float currentSpeed = agent.velocity.magnitude;
-        anim.SetBool("IsMoving", currentSpeed > 0.1f);   // Se usares a variável bool "IsMoving"
+        anim.SetBool("IsMoving", currentSpeed > 0.1f);
     }
 
 
