@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
     [Header("Passos")]
     public AudioSource footstepsAudio;
     public float stepInterval = 0.45f;
+    public float walkingVolume = 0.3f;
+    public float runningVolume = 1f;
 
     [Header("Alcance Sonoro")]
     public float walkingSoundRange = 3f;
@@ -73,6 +75,7 @@ public class Player : MonoBehaviour
         bool isCrouching = crouchController != null && crouchController.isCrouching;
         bool isMoving = playerController.input.magnitude > 0.1f;
         bool isGrounded = playerController.isGrounded;
+        bool isRunning = playerController.isSprinting;
 
         if (isCrouching || !isMoving || !isGrounded)
         {
@@ -87,6 +90,8 @@ public class Player : MonoBehaviour
             return;
         }
 
+        footstepsAudio.volume = isRunning ? runningVolume : walkingVolume;
+
         stepTimer += Time.deltaTime;
 
         if (stepTimer >= stepInterval)
@@ -94,7 +99,7 @@ public class Player : MonoBehaviour
             if (footstepsAudio.clip != null && !footstepsAudio.isPlaying)
                 footstepsAudio.Play();
 
-            float soundRange = playerController.isSprinting
+            float soundRange = isRunning
                 ? runningSoundRange
                 : walkingSoundRange;
 
@@ -134,6 +139,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(float damage)
     {
         if (dead) return;
+
         health -= damage;
 
         if (health <= 0f)
@@ -152,11 +158,11 @@ public class Player : MonoBehaviour
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            //  Destroy(gameObject);
+            // Destroy(gameObject);
         }
     }
 
-    //redução de energia
+    // Redução de energia
     private bool energyInhibited;
     private Coroutine inhibitionCoroutine;
 
@@ -191,7 +197,8 @@ public class Player : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    /*private void OnGUI()
+    /*
+    private void OnGUI()
     {
         if (!dead) return;
 
@@ -206,5 +213,6 @@ public class Player : MonoBehaviour
         style.normal.textColor = Color.red;
 
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Capturado", style);
-    }*/
+    }
+    */
 }
