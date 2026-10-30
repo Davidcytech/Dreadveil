@@ -23,6 +23,11 @@ public class Enemy : MonoBehaviour
     public bool alreadyAttacked;
     public GameObject projectile;
 
+    // Susto
+    public float scaredTime = 2f;
+    private bool isScared;
+    private float scaredTimer;
+
     //Estados do inimigo e deteção
     public bool inhibitsPlayerEnergy;
     public float energyInhibitionDuration = 5f;
@@ -51,44 +56,63 @@ public class Enemy : MonoBehaviour
     }
 
     private void Update()
-    {
-        if (anim != null && agent != null)
+{
+    if (anim != null && agent != null)
     {
         float currentSpeed = agent.velocity.magnitude;
         anim.SetBool("IsMoving", currentSpeed > 0.1f);
     }
 
+    playerInSightRange = EnemyWallDetection();
 
-        playerInSightRange = EnemyWallDetection();
+    bool justSpotted = playerInSightRange && !wasPlayerInSightRange;
 
-        if (playerInSightRange && !wasPlayerInSightRange && inhibitsPlayerEnergy)
+    if (justSpotted)
+    {
+        if (inhibitsPlayerEnergy)
         {
             Player playerScript = player.GetComponent<Player>();
-
             if (playerScript != null)
                 playerScript.InhibitEnergy(energyInhibitionDuration);
         }
 
-        wasPlayerInSightRange = playerInSightRange;
+        StartScare();
+    }
 
-        playerInAttackRange = playerInSightRange &&
-            Vector3.Distance(transform.position, player.position) <= attackRange;
+    wasPlayerInSightRange = playerInSightRange;
 
-        if (playerInSightRange)
+    playerInAttackRange = playerInSightRange &&
+        Vector3.Distance(transform.position, player.position) <= attackRange;
+
+    if (playerInSightRange)
+    {
+        investigating = false;
+
+        if (isScared)
         {
-            investigating = false;              // viu o jogador, cancela a investigação
-            if (playerInAttackRange) AttackPlayer();
-            else ChasePlayer();
+            Scared();
         }
-        else if (investigating)
+        else if (playerInAttackRange)
         {
-            Investigate();
+            SetShooting(true);
+            AttackPlayer();
         }
         else
         {
-            Patrolling();
+            SetShooting(false);
+            ChasePlayer();
         }
     }
+    else
+    {
+        // perdeu o player de vista: cancela o susto/disparo
+        if (isScared) EndScare();
+        SetShooting(false);
+
+        if (investigating) Investigate();
+        else Patrolling();
+    }
+}
 
     // Chamado pelo alarme (ou por qualquer outro som)
 	public void HearSound(Vector3 position)
@@ -245,6 +269,59 @@ public class Enemy : MonoBehaviour
              Invoke(nameof(ResetAttack), attackCooldown);
         }
     }
+
+    private void StartScare()
+{
+    isScared = true;
+    scaredTimer = scaredTime;
+    alreadyAttacked = true;                 // impede o tiro durante o susto
+    CancelInvoke(nameof(ResetAttack));
+
+    agent.isStopped = true;
+    agent.ResetPath();
+
+    if (anim != null)
+    {
+        anim.SetBool("IsShooting", false);
+        anim.SetBool("IsScared", true);
+    }
+}
+
+private void Scared()
+{
+    // fica parado, mas vira-se para o player
+    Vector3 direction = player.position - transform.position;
+    direction.y = 0f;
+
+    if (direction != Vector3.zero)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+    }
+
+    scaredTimer -= Time.deltaTime;
+
+    if (scaredTimer <= 0f)
+    {
+        EndScare();
+        alreadyAttacked = false;            // agora já pode disparar
+    }
+}
+
+private void EndScare()
+{
+    isScared = false;
+    agent.isStopped = false;
+
+    if (anim != null)
+        anim.SetBool("IsScared", false);
+}
+
+private void SetShooting(bool value)
+{
+    if (anim != null)
+        anim.SetBool("IsShooting", value);
+}
 
     private void ResetAttack()
     {
