@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
     public GameObject projectile;
 
     // Susto
-    public float scaredTime = 2f;
+    public float scaredTime = 1.5f;
     private bool isScared;
     private float scaredTimer;
 
@@ -307,7 +307,7 @@ public class Enemy : MonoBehaviour
         if (scaredTimer <= 0f)
         {
             EndScare();
-            alreadyAttacked = false;            // agora já pode disparar
+            alreadyAttacked = false;           // agora já pode disparar
         }
     }
 
