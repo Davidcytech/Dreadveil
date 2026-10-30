@@ -4,7 +4,7 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     private Animator anim;
-    
+
 
     public NavMeshAgent agent;
 
@@ -30,7 +30,9 @@ public class Enemy : MonoBehaviour
 
     //Estados do inimigo e deteção
     public bool inhibitsPlayerEnergy;
-    public float energyInhibitionDuration = 5f;
+    public float inhibitionRadius = 8f;     // área à volta do inimigo onde o player é inibido
+    private const float inhibitionRefresh = 0.25f;
+    private Player playerScript;
     private bool reachedSound;
     public float sightRange;
     public float attackRange;
@@ -48,95 +50,96 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-       player = GameObject.Find("vBasicController_character").transform;
-       agent = GetComponent<NavMeshAgent>();
+        player = GameObject.Find("vBasicController_character").transform;
+        agent = GetComponent<NavMeshAgent>();
 
-       anim = GetComponent<Animator>();
+        anim = GetComponent<Animator>();
+        playerScript = player.GetComponent<Player>();
 
     }
 
     private void Update()
-{
-    if (anim != null && agent != null)
     {
-        float currentSpeed = agent.velocity.magnitude;
-        anim.SetBool("IsMoving", currentSpeed > 0.1f);
-    }
-
-    playerInSightRange = EnemyWallDetection();
-
-    bool justSpotted = playerInSightRange && !wasPlayerInSightRange;
-
-    if (justSpotted)
-    {
-        if (inhibitsPlayerEnergy)
+        if (anim != null && agent != null)
         {
-            Player playerScript = player.GetComponent<Player>();
-            if (playerScript != null)
-                playerScript.InhibitEnergy(energyInhibitionDuration);
+            float currentSpeed = agent.velocity.magnitude;
+            anim.SetBool("IsMoving", currentSpeed > 0.1f);
         }
 
-        StartScare();
-    }
-
-    wasPlayerInSightRange = playerInSightRange;
-
-    playerInAttackRange = playerInSightRange &&
-        Vector3.Distance(transform.position, player.position) <= attackRange;
-
-    if (playerInSightRange)
-    {
-        investigating = false;
-
-        if (isScared)
+        // Inibe o player enquanto estiver na área; pára quando o inimigo morre
+        if (inhibitsPlayerEnergy && playerScript != null &&
+            Vector3.Distance(transform.position, player.position) <= inhibitionRadius)
         {
-            Scared();
+            playerScript.InhibitEnergy(inhibitionRefresh);
         }
-        else if (playerInAttackRange)
+
+        playerInSightRange = EnemyWallDetection();
+
+        bool justSpotted = playerInSightRange && !wasPlayerInSightRange;
+
+        if (justSpotted)
         {
-            SetShooting(true);
-            AttackPlayer();
+            StartScare();
+        }
+
+        wasPlayerInSightRange = playerInSightRange;
+
+        playerInAttackRange = playerInSightRange &&
+            Vector3.Distance(transform.position, player.position) <= attackRange;
+
+        if (playerInSightRange)
+        {
+            investigating = false;
+
+            if (isScared)
+            {
+                Scared();
+            }
+            else if (playerInAttackRange)
+            {
+                SetShooting(true);
+                AttackPlayer();
+            }
+            else
+            {
+                SetShooting(false);
+                ChasePlayer();
+            }
         }
         else
         {
+            // perdeu o player de vista: cancela o susto/disparo
+            if (isScared) EndScare();
             SetShooting(false);
-            ChasePlayer();
+
+            if (investigating) Investigate();
+            else Patrolling();
         }
     }
-    else
-    {
-        // perdeu o player de vista: cancela o susto/disparo
-        if (isScared) EndScare();
-        SetShooting(false);
-
-        if (investigating) Investigate();
-        else Patrolling();
-    }
-}
 
     // Chamado pelo alarme (ou por qualquer outro som)
-	public void HearSound(Vector3 position)
-	{
-	    if (playerInSightRange) return;
+    public void HearSound(Vector3 position)
+    {
+        if (playerInSightRange) return;
 
-	    // raio pequeno, para não saltar para outra zona
-	    if (!NavMesh.SamplePosition(position, out NavMeshHit navHit, 1.5f, NavMesh.AllAreas))
-		return;
+        // raio pequeno, para não saltar para outra zona
+        if (!NavMesh.SamplePosition(position, out NavMeshHit navHit, 1.5f, NavMesh.AllAreas))
+            return;
 
-	    // só aceita se existir um caminho completo até lá
-	    NavMeshPath path = new NavMeshPath();
-	    if (!agent.CalculatePath(navHit.position, path) || path.status != NavMeshPathStatus.PathComplete)
-	    {
-		Debug.LogWarning(name + ": sem caminho completo até ao alarme", this);
-		return;
-	    }
+        // só aceita se existir um caminho completo até lá
+        NavMeshPath path = new NavMeshPath();
+        if (!agent.CalculatePath(navHit.position, path) || path.status != NavMeshPathStatus.PathComplete)
+        {
+            Debug.LogWarning(name + ": sem caminho completo até ao alarme", this);
+            return;
+        }
 
-	    soundPosition = navHit.position;
-	    investigating = true;
-	    searchTimer = searchTime;
+        soundPosition = navHit.position;
+        investigating = true;
+        searchTimer = searchTime;
         agent.isStopped = false;
         reachedSound = false;
-	}
+    }
 
 
     private void Investigate()
@@ -217,20 +220,20 @@ public class Enemy : MonoBehaviour
 
     private void Patrolling()
     {
-       if(patrolPoints.Length == 0)
-       {
-        return;
-       }
+        if (patrolPoints.Length == 0)
+        {
+            return;
+        }
 
         agent.SetDestination(patrolPoints[currentPoint].position);
-        if(!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
         {
             currentPoint++;
             if (currentPoint >= patrolPoints.Length)
             {
-             currentPoint = 0;
+                currentPoint = 0;
             }
-    
+
         }
     }
 
@@ -244,19 +247,19 @@ public class Enemy : MonoBehaviour
     {
         agent.SetDestination(transform.position);
 
-       // transform.LookAt(player);
+        // transform.LookAt(player);
         Vector3 direction = player.position - transform.position;
         direction.y = 0f;
 
-        if(direction != Vector3.zero)
+        if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation,targetRotation,Time.deltaTime * 10f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
 
-        if(!alreadyAttacked)
+        if (!alreadyAttacked)
         {
-            GameObject bullet = Instantiate( projectile, transform.position + transform.forward * 1.2f + Vector3.up, Quaternion.LookRotation(direction));
+            GameObject bullet = Instantiate(projectile, transform.position + transform.forward * 1.2f + Vector3.up, Quaternion.LookRotation(direction));
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
 
             if (rb != null)
@@ -264,106 +267,106 @@ public class Enemy : MonoBehaviour
                 Vector3 shootDirection = (player.position - bullet.transform.position).normalized;
                 rb.AddForce(transform.forward * 10f, ForceMode.Impulse);
             }
-        
+
             alreadyAttacked = true;
-             Invoke(nameof(ResetAttack), attackCooldown);
+            Invoke(nameof(ResetAttack), attackCooldown);
         }
     }
 
     private void StartScare()
-{
-    isScared = true;
-    scaredTimer = scaredTime;
-    alreadyAttacked = true;                 // impede o tiro durante o susto
-    CancelInvoke(nameof(ResetAttack));
-
-    agent.isStopped = true;
-    agent.ResetPath();
-
-    if (anim != null)
     {
-        anim.SetBool("IsShooting", false);
-        anim.SetBool("IsScared", true);
-    }
-}
+        isScared = true;
+        scaredTimer = scaredTime;
+        alreadyAttacked = true;                 // impede o tiro durante o susto
+        CancelInvoke(nameof(ResetAttack));
 
-private void Scared()
-{
-    // fica parado, mas vira-se para o player
-    Vector3 direction = player.position - transform.position;
-    direction.y = 0f;
+        agent.isStopped = true;
+        agent.ResetPath();
 
-    if (direction != Vector3.zero)
-    {
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        if (anim != null)
+        {
+            anim.SetBool("IsShooting", false);
+            anim.SetBool("IsScared", true);
+        }
     }
 
-    scaredTimer -= Time.deltaTime;
-
-    if (scaredTimer <= 0f)
+    private void Scared()
     {
-        EndScare();
-        alreadyAttacked = false;            // agora já pode disparar
+        // fica parado, mas vira-se para o player
+        Vector3 direction = player.position - transform.position;
+        direction.y = 0f;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+
+        scaredTimer -= Time.deltaTime;
+
+        if (scaredTimer <= 0f)
+        {
+            EndScare();
+            alreadyAttacked = false;            // agora já pode disparar
+        }
     }
-}
 
-private void EndScare()
-{
-    isScared = false;
-    agent.isStopped = false;
+    private void EndScare()
+    {
+        isScared = false;
+        agent.isStopped = false;
 
-    if (anim != null)
-        anim.SetBool("IsScared", false);
-}
+        if (anim != null)
+            anim.SetBool("IsScared", false);
+    }
 
-private void SetShooting(bool value)
-{
-    if (anim != null)
-        anim.SetBool("IsShooting", value);
-}
+    private void SetShooting(bool value)
+    {
+        if (anim != null)
+            anim.SetBool("IsShooting", value);
+    }
 
     private void ResetAttack()
     {
         alreadyAttacked = false;
     }
-/*    private void OnDrawGizmosSelected()
-{
-    Vector3 origin = transform.position + Vector3.up * 1.5f;
+    /*    private void OnDrawGizmosSelected()
+    {
+        Vector3 origin = transform.position + Vector3.up * 1.5f;
 
-    // Alcance de visão (amarelo)
-    Gizmos.color = Color.yellow;
-    Gizmos.DrawWireSphere(transform.position, sightRange);
+        // Alcance de visão (amarelo)
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, sightRange);
 
-    // Alcance de visão quando o player está agachado (laranja)
-    Gizmos.color = new Color(1f, 0.5f, 0f);
-    Gizmos.DrawWireSphere(transform.position, sightRange * crochSight);
+        // Alcance de visão quando o player está agachado (laranja)
+        Gizmos.color = new Color(1f, 0.5f, 0f);
+        Gizmos.DrawWireSphere(transform.position, sightRange * crochSight);
 
-    // Alcance de ataque (vermelho)
-    Gizmos.color = Color.red;
-    Gizmos.DrawWireSphere(transform.position, attackRange);
+        // Alcance de ataque (vermelho)
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
 
-    // Cone de visão (ciano): duas linhas nos limites do ângulo + linha central
-    Gizmos.color = Color.cyan;
-    Vector3 left = Quaternion.Euler(0f, -angle / 2f, 0f) * transform.forward;
-    Vector3 right = Quaternion.Euler(0f, angle / 2f, 0f) * transform.forward;
+        // Cone de visão (ciano): duas linhas nos limites do ângulo + linha central
+        Gizmos.color = Color.cyan;
+        Vector3 left = Quaternion.Euler(0f, -angle / 2f, 0f) * transform.forward;
+        Vector3 right = Quaternion.Euler(0f, angle / 2f, 0f) * transform.forward;
 
-    Gizmos.DrawLine(origin, origin + left * sightRange);
-    Gizmos.DrawLine(origin, origin + right * sightRange);
-    Gizmos.DrawLine(origin, origin + transform.forward * sightRange);
-}*/
+        Gizmos.DrawLine(origin, origin + left * sightRange);
+        Gizmos.DrawLine(origin, origin + right * sightRange);
+        Gizmos.DrawLine(origin, origin + transform.forward * sightRange);
+    }*/
 
 
 }
 
 
-       /* if(!alreadyAttacked)
-        {
-            Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-            rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-            rb.AddForce(transform.up * 8f, ForceMode.Impulse);
+/* if(!alreadyAttacked)
+ {
+     Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
+     rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
+     rb.AddForce(transform.up * 8f, ForceMode.Impulse);
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttack), attackCooldown);
+     alreadyAttacked = true;
+     Invoke(nameof(ResetAttack), attackCooldown);
 
-        }*/
+ }*/

@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using Invector.vCharacterController;
 
 public class Player : MonoBehaviour
 {
@@ -10,15 +11,18 @@ public class Player : MonoBehaviour
     public float maxEnergy = 100f;
     public float energyPerRegeneration = 25f;
     public float regenerationInterval = 5f;
-    private bool dead;
 
+    private bool dead;
     private float regenerationTimer;
 
     [Header("Passos")]
     public AudioSource footstepsAudio;
-    public float stepInterval = 0.45f;
+    public float initialStepDelay = 0.25f;
+    public float stepInterval = 0.6f;
+    public float runningStepInterval = 0.4f;
     public float walkingVolume = 0.3f;
     public float runningVolume = 1f;
+    public float runningPitch = 1.2f;
 
     [Header("Alcance Sonoro")]
     public float walkingSoundRange = 3f;
@@ -26,23 +30,34 @@ public class Player : MonoBehaviour
 
     private float stepTimer;
     private bool footstepsBlocked;
-    private Invector.vCharacterController.vThirdPersonController playerController;
+    private bool wasMoving;
+
+    private vThirdPersonController playerController;
+    private vCrouchController crouchController;
 
     private void Start()
     {
-        playerController = GetComponent<Invector.vCharacterController.vThirdPersonController>();
+        playerController = GetComponent<vThirdPersonController>();
+        crouchController = GetComponent<vCrouchController>();
+
         footstepsBlocked = false;
+        stepTimer = 0f;
+        wasMoving = false;
+
+        if (footstepsAudio != null)
+        {
+            footstepsAudio.playOnAwake = false;
+            footstepsAudio.loop = false;
+            footstepsAudio.Stop();
+        }
     }
 
     private void Update()
     {
         if (dead || footstepsBlocked)
         {
-            if (footstepsAudio != null)
-            {
+            if (footstepsAudio != null && footstepsAudio.isPlaying)
                 footstepsAudio.Stop();
-                footstepsAudio.time = 0f;
-            }
 
             return;
         }
@@ -56,11 +71,18 @@ public class Player : MonoBehaviour
             return;
         }
 
+        if (energyInhibited)
+            return;
+
         regenerationTimer += Time.deltaTime;
 
         if (regenerationTimer >= regenerationInterval)
         {
-            energy = Mathf.Min(maxEnergy, energy + energyPerRegeneration);
+            energy = Mathf.Min(
+                maxEnergy,
+                energy + energyPerRegeneration
+            );
+
             regenerationTimer = 0f;
         }
     }
@@ -70,43 +92,72 @@ public class Player : MonoBehaviour
         if (footstepsAudio == null || playerController == null)
             return;
 
-        vCrouchController crouchController = GetComponent<vCrouchController>();
+        bool isCrouching =
+            crouchController != null &&
+            crouchController.isCrouching;
 
-        bool isCrouching = crouchController != null && crouchController.isCrouching;
-        bool isMoving = playerController.input.magnitude > 0.1f;
+        bool hasMovementInput =
+            playerController.input.magnitude > 0.1f;
+
         bool isGrounded = playerController.isGrounded;
         bool isRunning = playerController.isSprinting;
 
-        if (isCrouching || !isMoving || !isGrounded)
+        bool isMoving =
+            hasMovementInput &&
+            isGrounded &&
+            !isCrouching;
+
+        if (!isMoving)
         {
             stepTimer = 0f;
+            wasMoving = false;
 
             if (footstepsAudio.isPlaying)
-            {
                 footstepsAudio.Stop();
-                footstepsAudio.time = 0f;
-            }
 
             return;
         }
 
-        footstepsAudio.volume = isRunning ? runningVolume : walkingVolume;
+        if (!wasMoving)
+        {
+            stepTimer = 0f;
+            wasMoving = true;
+        }
+
+        float currentInterval = isRunning
+            ? runningStepInterval
+            : stepInterval;
+
+        footstepsAudio.volume = isRunning
+            ? runningVolume
+            : walkingVolume;
+
+        footstepsAudio.pitch = isRunning
+            ? runningPitch
+            : 1f;
 
         stepTimer += Time.deltaTime;
 
-        if (stepTimer >= stepInterval)
-        {
-            if (footstepsAudio.clip != null && !footstepsAudio.isPlaying)
-                footstepsAudio.Play();
+        float requiredDelay = initialStepDelay + currentInterval;
 
-            float soundRange = isRunning
-                ? runningSoundRange
-                : walkingSoundRange;
+        if (stepTimer < requiredDelay)
+            return;
 
-            AlertEnemies(soundRange);
+        if (footstepsAudio.isPlaying)
+            return;
 
-            stepTimer = 0f;
-        }
+        if (footstepsAudio.clip == null)
+            return;
+
+        footstepsAudio.Play();
+
+        float soundRange = isRunning
+            ? runningSoundRange
+            : walkingSoundRange;
+
+        AlertEnemies(soundRange);
+
+        stepTimer = initialStepDelay;
     }
 
     private void AlertEnemies(float soundRange)
@@ -115,6 +166,9 @@ public class Player : MonoBehaviour
 
         foreach (Enemy enemy in enemies)
         {
+            if (enemy == null)
+                continue;
+
             float distance = Vector3.Distance(
                 transform.position,
                 enemy.transform.position
@@ -129,7 +183,7 @@ public class Player : MonoBehaviour
 
     public bool TryUseEnergy(float amount)
     {
-        if (energy < amount)
+        if (energyInhibited || energy < amount)
             return false;
 
         energy -= amount;
@@ -138,7 +192,8 @@ public class Player : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (dead) return;
+        if (dead)
+            return;
 
         health -= damage;
 
@@ -149,20 +204,17 @@ public class Player : MonoBehaviour
             footstepsBlocked = true;
 
             if (footstepsAudio != null)
-            {
                 footstepsAudio.Stop();
-                footstepsAudio.time = 0f;
-            }
 
             StartCoroutine(RestartGame());
+
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            // Destroy(gameObject);
         }
     }
 
-    // Redução de energia
+    [Header("Redução de Energia")]
     private bool energyInhibited;
     private Coroutine inhibitionCoroutine;
 
@@ -171,7 +223,9 @@ public class Player : MonoBehaviour
         if (inhibitionCoroutine != null)
             StopCoroutine(inhibitionCoroutine);
 
-        inhibitionCoroutine = StartCoroutine(EnergyInhibition(duration));
+        inhibitionCoroutine = StartCoroutine(
+            EnergyInhibition(duration)
+        );
     }
 
     private IEnumerator EnergyInhibition(float duration)
@@ -180,6 +234,7 @@ public class Player : MonoBehaviour
 
         energyInhibited = true;
         energy = 0f;
+        regenerationTimer = 0f;
 
         yield return new WaitForSeconds(duration);
 
@@ -194,25 +249,8 @@ public class Player : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().name
+        );
     }
-
-    /*
-    private void OnGUI()
-    {
-        if (!dead) return;
-
-        Color old = GUI.color;
-        GUI.color = new Color(0f, 0f, 0f, 0.85f);
-        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
-        GUI.color = old;
-
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.fontSize = 64;
-        style.alignment = TextAnchor.MiddleCenter;
-        style.normal.textColor = Color.red;
-
-        GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "Capturado", style);
-    }
-    */
 }
