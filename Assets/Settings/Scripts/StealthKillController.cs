@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class StealthKillController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Animator playerAnimator;
+    [SerializeField] private AudioSource audioSource;
 
     [Header("Takedown Settings")]
     [SerializeField] private float takedownRange = 2.0f;
@@ -17,6 +19,18 @@ public class StealthKillController : MonoBehaviour
     [Header("Stealth Takedown (Botão Esquerdo)")]
     [SerializeField] private float stealthHitDelay = 0.3f;
     [SerializeField] private float stealthAnimationDuration = 2.0f;
+
+    [Header("Kick Sound")]
+    [SerializeField] private AudioClip kickSound;
+    [Range(0f, 1f)][SerializeField] private float kickVolume = 1f;
+    [Tooltip("Segundos desde o início da animação até ao primeiro chuto")]
+    [SerializeField] private float firstKickDelay = 1.5f;
+    [Tooltip("Segundos entre o primeiro e o segundo chuto")]
+    [SerializeField] private float delayBetweenKicks = 2f;
+
+    [Header("Noise (só no Brutal)")]
+    [Tooltip("Raio em que outros inimigos ouvem cada chuto")]
+    [SerializeField] private float soundHearingRadius = 15f;
 
     [Header("Enemy Detection")]
     [SerializeField] private LayerMask enemyLayer;
@@ -32,6 +46,9 @@ public class StealthKillController : MonoBehaviour
         if (playerAnimator == null)
             playerAnimator = GetComponent<Animator>();
 
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
         invectorInput = GetComponent("vThirdPersonInput") as MonoBehaviour;
         invectorController = GetComponent("vBasicController") as MonoBehaviour;
         if (invectorController == null)
@@ -45,19 +62,19 @@ public class StealthKillController : MonoBehaviour
         if (isDoingTakedown)
             return;
 
-        // Botão Direito do Rato -> Abate Brutal
+        // Botão direito -> brutal (faz barulho)
         if (Input.GetMouseButtonDown(1))
         {
-            TryStealthKill("DoBrutalTakedow", "BrutalTaker", brutalHitDelay, brutalAnimationDuration);
+            TryStealthKill("DoBrutalTakedow", "BrutalTaker", brutalHitDelay, brutalAnimationDuration, true);
         }
-        // Botão Esquerdo do Rato -> Abate Furtivo
+        // Botão esquerdo -> furtivo (silencioso)
         else if (Input.GetMouseButtonDown(0))
         {
-            TryStealthKill("DoStealthTakedow", "StealthTaker", stealthHitDelay, stealthAnimationDuration);
+            TryStealthKill("DoStealthTakedow", "StealthTaker", stealthHitDelay, stealthAnimationDuration, false);
         }
     }
 
-    private void TryStealthKill(string playerStateName, string enemyStateName, float hitDelay, float animDuration)
+    private void TryStealthKill(string playerStateName, string enemyStateName, float hitDelay, float animDuration, bool makesNoise)
     {
         Collider[] enemies = Physics.OverlapSphere(
             transform.position,
@@ -92,10 +109,10 @@ public class StealthKillController : MonoBehaviour
         if (target == null || !target.CanBeKilled)
             return;
 
-        StartCoroutine(PerformTakedown(target, playerStateName, enemyStateName, hitDelay, animDuration));
+        StartCoroutine(PerformTakedown(target, playerStateName, enemyStateName, hitDelay, animDuration, makesNoise));
     }
 
-    private IEnumerator PerformTakedown(StealthKillTarget target, string playerStateName, string enemyStateName, float hitDelay, float animDuration)
+    private IEnumerator PerformTakedown(StealthKillTarget target, string playerStateName, string enemyStateName, float hitDelay, float animDuration, bool makesNoise)
     {
         isDoingTakedown = true;
 
@@ -114,34 +131,29 @@ public class StealthKillController : MonoBehaviour
             yield break;
         }
 
-        // 1. DESATIVAR CONTROLO DE MOVIMENTO E IA
         target.StartTakedown();
 
         if (invectorInput != null) invectorInput.enabled = false;
         if (invectorController != null) invectorController.enabled = false;
         if (characterController != null) characterController.enabled = false;
 
-        // 2. POSICIONAR E ALINHAR O PLAYER
         transform.position = target.TakedownPoint.position;
         transform.rotation = target.TakedownPoint.rotation;
 
-        // 3. INICIAR ANIMAÇÃO DO PLAYER
         playerAnimator.Play(playerStateName, 0, 0f);
 
-        // 4. ESPERAR PELO MOMENTO DO IMPACTO
+        StartCoroutine(PlayKickSounds(target, makesNoise));
+
         yield return new WaitForSeconds(hitDelay);
 
-        // 5. INICIAR ANIMAÇÃO DO INIMIGO
         enemyAnimator.Play(enemyStateName, 0, 0f);
 
-        // 6. ESPERAR O RESTO DA DURAÇÃO DA ANIMAÇÃO ESPECÍFICA
         float remainingTime = animDuration - hitDelay;
         if (remainingTime > 0)
         {
             yield return new WaitForSeconds(remainingTime);
         }
 
-        // 7. FINALIZAR
         target.FinishTakedown();
 
         if (invectorInput != null) invectorInput.enabled = true;
@@ -151,9 +163,58 @@ public class StealthKillController : MonoBehaviour
         isDoingTakedown = false;
     }
 
+    private IEnumerator PlayKickSounds(StealthKillTarget victim, bool makesNoise)
+    {
+        if (kickSound == null || audioSource == null)
+        {
+            Debug.LogWarning("Falta o kickSound ou o AudioSource no Player!");
+            yield break;
+        }
+
+        yield return new WaitForSeconds(firstKickDelay);
+        audioSource.PlayOneShot(kickSound, kickVolume);
+        if (makesNoise) AlertNearbyEnemies(victim);
+
+        yield return new WaitForSeconds(delayBetweenKicks);
+        audioSource.PlayOneShot(kickSound, kickVolume);
+        if (makesNoise) AlertNearbyEnemies(victim);
+    }
+
+    private void AlertNearbyEnemies(StealthKillTarget victim)
+    {
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            soundHearingRadius,
+            enemyLayer
+        );
+
+        HashSet<Enemy> alerted = new HashSet<Enemy>();
+
+        foreach (Collider col in hits)
+        {
+            Enemy enemy = col.GetComponentInParent<Enemy>();
+
+            if (enemy == null || !enemy.enabled)
+                continue;
+
+            // Ignora o inimigo que está a ser abatido
+            if (victim != null && enemy.gameObject == victim.gameObject)
+                continue;
+
+            // Evita chamar o mesmo inimigo várias vezes (tem vários colliders)
+            if (!alerted.Add(enemy))
+                continue;
+
+            enemy.HearSound(transform.position);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, enemySearchRadius);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, soundHearingRadius);
     }
 }

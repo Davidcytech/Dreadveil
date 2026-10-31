@@ -52,6 +52,10 @@ public class EnemyMelee : MonoBehaviour
 
     private void Update()
     {
+        // Agent inativo ou fora do NavMesh (ex.: inimigo abatido): não faz nada
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
         if (anim != null)
             anim.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
 
@@ -85,6 +89,7 @@ public class EnemyMelee : MonoBehaviour
 
     public void HearSound(Vector3 position)
     {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh) return;
         if (playerInSightRange) return;
 
         if (!NavMesh.SamplePosition(position, out NavMeshHit navHit, 1.5f, NavMesh.AllAreas))

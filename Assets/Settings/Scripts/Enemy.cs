@@ -60,6 +60,10 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        // Se o agent não está ativo ou não está no NavMesh (ex.: inimigo abatido), não faz nada
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
         if (anim != null && agent != null)
         {
             float currentSpeed = agent.velocity.magnitude;
@@ -120,6 +124,7 @@ public class Enemy : MonoBehaviour
     // Chamado pelo alarme (ou por qualquer outro som)
     public void HearSound(Vector3 position)
     {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh) return;
         if (playerInSightRange) return;
 
         // raio pequeno, para não saltar para outra zona
@@ -140,8 +145,6 @@ public class Enemy : MonoBehaviour
         agent.isStopped = false;
         reachedSound = false;
     }
-
-
     private void Investigate()
     {
         if (reachedSound)
