@@ -11,7 +11,7 @@ public class Hostage : MonoBehaviour
     {
         if (won) return;
 
-        if (Input.GetKeyDown(interactKey) && PlayerIsNear())
+        if (Input.GetKeyDown(interactKey) && PlayerNearBy())
         {
             won = true;
             Time.timeScale = 0f;
@@ -20,7 +20,8 @@ public class Hostage : MonoBehaviour
         }
     }
 
-    private bool PlayerIsNear()
+    private bool PlayerNearBy()
+
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, interactRadius);
 
@@ -33,7 +34,8 @@ public class Hostage : MonoBehaviour
         return false;
     }
 
-    // Ecrã de vitória desenhado por código (sem Canvas)
+    // PlaceHolder mano, tou farto
+    
     private void OnGUI()
     {
         if (!won) return;
@@ -53,10 +55,4 @@ public class Hostage : MonoBehaviour
         GUI.Label(new Rect(0, 0, Screen.width, Screen.height), "VITÓRIA!", style);
     }
 
-    // só tu vês isto, no Scene View
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, interactRadius);
-    }
 }

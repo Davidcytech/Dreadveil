@@ -35,6 +35,13 @@ public class Player : MonoBehaviour
     private vThirdPersonController playerController;
     private vCrouchController crouchController;
 
+
+    // Implementação dos power ups
+    // Energia power up
+    private float timerEpoweup;
+    public bool energyEpowerup => timerEpoweup > 0f;
+
+
     private void Start()
     {
         playerController = GetComponent<vThirdPersonController>();
@@ -54,6 +61,13 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        // adicionei isto para o powerup
+        if (timerEpoweup > 0f)
+        {    
+            timerEpoweup -= Time.deltaTime;
+            energy = maxEnergy;
+        }
+
         if (dead || footstepsBlocked)
         {
             if (footstepsAudio != null && footstepsAudio.isPlaying)
@@ -78,11 +92,7 @@ public class Player : MonoBehaviour
 
         if (regenerationTimer >= regenerationInterval)
         {
-            energy = Mathf.Min(
-                maxEnergy,
-                energy + energyPerRegeneration
-            );
-
+            energy = Mathf.Min(maxEnergy,energy + energyPerRegeneration);
             regenerationTimer = 0f;
         }
     }
@@ -96,16 +106,12 @@ public class Player : MonoBehaviour
             crouchController != null &&
             crouchController.isCrouching;
 
-        bool hasMovementInput =
-            playerController.input.magnitude > 0.1f;
+        bool hasMovementInput = playerController.input.magnitude > 0.1f;
 
         bool isGrounded = playerController.isGrounded;
         bool isRunning = playerController.isSprinting;
 
-        bool isMoving =
-            hasMovementInput &&
-            isGrounded &&
-            !isCrouching;
+        bool isMoving = hasMovementInput && isGrounded && !isCrouching;
 
         if (!isMoving)
         {
@@ -169,11 +175,7 @@ public class Player : MonoBehaviour
             if (enemy == null)
                 continue;
 
-            float distance = Vector3.Distance(
-                transform.position,
-                enemy.transform.position
-            );
-
+            float distance = Vector3.Distance(transform.position,enemy.transform.position);
             if (distance <= soundRange)
             {
                 enemy.HearSound(transform.position);
@@ -183,6 +185,11 @@ public class Player : MonoBehaviour
 
     public bool TryUseEnergy(float amount)
     {
+        // e isto tambem
+        if (energyEpowerup){
+           return true;
+        }
+
         if (energyInhibited || energy < amount)
             return false;
 
@@ -214,7 +221,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    [Header("Redução de Energia")]
+    // Redução de energia
     private bool energyInhibited;
     private Coroutine inhibitionCoroutine;
 
@@ -230,6 +237,9 @@ public class Player : MonoBehaviour
 
     private IEnumerator EnergyInhibition(float duration)
     {
+        // para o power up energia
+    
+
         float savedEnergy = energy;
 
         energyInhibited = true;
@@ -249,8 +259,19 @@ public class Player : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().name
-        );
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void EnergyPowerup(float duration){
+
+        if (inhibitionCoroutine != null)
+        {
+            StopCoroutine(inhibitionCoroutine);
+            inhibitionCoroutine = null;
+        }
+
+        energyInhibited = false;
+        timerEpoweup = duration;
+        energy = maxEnergy;
     }
 }
