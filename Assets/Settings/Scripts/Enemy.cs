@@ -48,6 +48,12 @@ public class Enemy : MonoBehaviour
     public float searchTime = 4f;     // tempo a procurar quando chega ao local
     private float searchTimer;
 
+private static float silenceEndTime;
+
+public static void ActivateSilence(float duration)
+{
+    silenceEndTime = Mathf.Max(silenceEndTime, Time.time + duration);
+}
     private void Awake()
     {
         player = GameObject.Find("vBasicController_character").transform;
@@ -123,7 +129,10 @@ public class Enemy : MonoBehaviour
 
     // Chamado pelo alarme (ou por qualquer outro som)
     public void HearSound(Vector3 position)
+    
     {
+        if (Time.time < silenceEndTime)
+        return;
         if (agent == null || !agent.enabled || !agent.isOnNavMesh) return;
         if (playerInSightRange) return;
 
