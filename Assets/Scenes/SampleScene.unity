@@ -2545,12 +2545,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillController
   playerAnimator: {fileID: 163998208}
+  audioSource: {fileID: 0}
   takedownRange: 2
   enemySearchRadius: 2.5
   brutalHitDelay: 0.7
   brutalAnimationDuration: 4
   stealthHitDelay: 0.1
   stealthAnimationDuration: 6
+  kickSound: {fileID: 0}
+  kickVolume: 1
+  firstKickDelay: 1.5
+  delayBetweenKicks: 2
+  soundHearingRadius: 15
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -4121,7 +4127,7 @@ MonoBehaviour:
   - {fileID: 216510942}
   - {fileID: 1310166974}
   - {fileID: 1614775371}
-  attackCooldown: 0
+  attackCooldown: 3
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   scaredTime: 2
@@ -4136,7 +4142,11 @@ MonoBehaviour:
     m_Bits: 8
   angle: 180
   crochSight: 0.5
+  loseSightTime: 1.5
   searchTime: 4
+  alertsOthers: 1
+  alertDelay: 2
+  alertRadius: 20
 --- !u!195 &236901496
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -5780,7 +5790,7 @@ MonoBehaviour:
   - {fileID: 225805164}
   - {fileID: 1519776102}
   - {fileID: 1888439198}
-  attackCooldown: 0
+  attackCooldown: 3
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   scaredTime: 2
@@ -5795,7 +5805,11 @@ MonoBehaviour:
     m_Bits: 8
   angle: 180
   crochSight: 0.5
+  loseSightTime: 1.5
   searchTime: 4
+  alertsOthers: 1
+  alertDelay: 2
+  alertRadius: 20
 --- !u!4 &394389618 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
@@ -10878,7 +10892,7 @@ MonoBehaviour:
   - {fileID: 1427013966}
   - {fileID: 89146589}
   - {fileID: 142316474}
-  attackCooldown: 0
+  attackCooldown: 3
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   scaredTime: 2
@@ -10893,7 +10907,11 @@ MonoBehaviour:
     m_Bits: 8
   angle: 180
   crochSight: 0.5
+  loseSightTime: 1.5
   searchTime: 4
+  alertsOthers: 1
+  alertDelay: 2
+  alertRadius: 20
 --- !u!195 &797643165
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -14210,7 +14228,7 @@ MonoBehaviour:
   - {fileID: 998605954}
   - {fileID: 638511472}
   - {fileID: 516664122}
-  attackCooldown: 0
+  attackCooldown: 3
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   scaredTime: 2
@@ -14225,7 +14243,11 @@ MonoBehaviour:
     m_Bits: 8
   angle: 180
   crochSight: 0.5
+  loseSightTime: 1.5
   searchTime: 4
+  alertsOthers: 1
+  alertDelay: 2
+  alertRadius: 20
 --- !u!195 &938012547
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -23240,7 +23262,7 @@ MonoBehaviour:
   - {fileID: 1780097874}
   - {fileID: 1760645553}
   - {fileID: 1519305790}
-  attackCooldown: 0
+  attackCooldown: 3
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   scaredTime: 2
@@ -23255,7 +23277,11 @@ MonoBehaviour:
     m_Bits: 8
   angle: 180
   crochSight: 0.5
+  loseSightTime: 1.5
   searchTime: 4
+  alertsOthers: 1
+  alertDelay: 2
+  alertRadius: 20
 --- !u!195 &1341755014
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -26091,7 +26117,7 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 906451040}
   - {fileID: 674581113}
-  attackCooldown: 0
+  attackCooldown: 3
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   scaredTime: 2
@@ -26106,7 +26132,11 @@ MonoBehaviour:
     m_Bits: 8
   angle: 180
   crochSight: 0.5
+  loseSightTime: 1.5
   searchTime: 4
+  alertsOthers: 1
+  alertDelay: 2
+  alertRadius: 20
 --- !u!195 &1473810306
 NavMeshAgent:
   m_ObjectHideFlags: 0

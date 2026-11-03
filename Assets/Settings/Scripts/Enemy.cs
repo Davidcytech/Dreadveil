@@ -42,18 +42,38 @@ public class Enemy : MonoBehaviour
     public float angle = 90f;
     public float crochSight = 0.5f;
     private bool wasPlayerInSightRange;
+
+    //==============================================
+    // para verificar a ultima posição vista e perseguir mais um poruco
+    //=============================================
+    public float loseSightTime = 5f;     // tempo a perseguir depois de perder o player
+    private float lostSightTimer;          // o temporizador de perda
+    private Vector3 lastSeenPosition;      // ultima posição onde o player foi visto
+
+
+
+
     // Audição
     private bool investigating;
     private Vector3 soundPosition;
     public float searchTime = 4f;     // tempo a procurar quando chega ao local
     private float searchTimer;
 
-private static float silenceEndTime;
 
-public static void ActivateSilence(float duration)
-{
-    silenceEndTime = Mathf.Max(silenceEndTime, Time.time + duration);
-}
+    // Esta parte é para a deteção em cadeia
+    public bool alertsOthers = true; // bool para alertar os outros
+    public float alertDelay = 2f;      // (susto) tempo para ver o player antes de avisar
+    public float alertRadius = 20f;    // quem estiver dentro deste raio é avisado
+    private float alertTimer;    // tempo de alerta
+    private bool alertSent;  // bool para verificar se o alarme ja foi enviado
+
+    
+    private static float silenceEndTime;
+
+    public static void ActivateSilence(float duration)
+    {
+      silenceEndTime = Mathf.Max(silenceEndTime, Time.time + duration);
+    }
     private void Awake()
     {
         player = GameObject.Find("vBasicController_character").transform;
@@ -76,6 +96,7 @@ public static void ActivateSilence(float duration)
             anim.SetBool("IsMoving", currentSpeed > 0.1f);
         }
 
+
         // Inibe o player enquanto estiver na área; pára quando o inimigo morre
         if (inhibitsPlayerEnergy && playerScript != null &&
             Vector3.Distance(transform.position, player.position) <= inhibitionRadius)
@@ -92,14 +113,17 @@ public static void ActivateSilence(float duration)
             StartScare();
         }
 
+        HandleAlert();
+
         wasPlayerInSightRange = playerInSightRange;
 
-        playerInAttackRange = playerInSightRange &&
-            Vector3.Distance(transform.position, player.position) <= attackRange;
+        playerInAttackRange = playerInSightRange && Vector3.Distance(transform.position, player.position) <= attackRange;
 
         if (playerInSightRange)
         {
             investigating = false;
+            lostSightTimer = loseSightTime;
+            lastSeenPosition = player.position;
 
             if (isScared)
             {
@@ -122,7 +146,14 @@ public static void ActivateSilence(float duration)
             if (isScared) EndScare();
             SetShooting(false);
 
-            if (investigating) Investigate();
+            if (lostSightTimer > 0f)
+            {
+                lostSightTimer -= Time.deltaTime;
+                agent.isStopped = false;
+                agent.SetDestination(lastSeenPosition);
+            }
+
+            else if (investigating) Investigate();
             else Patrolling();
         }
     }
@@ -326,6 +357,7 @@ public static void ActivateSilence(float duration)
     private void EndScare()
     {
         isScared = false;
+        alreadyAttacked = false; 
         agent.isStopped = false;
 
         if (anim != null)
@@ -342,43 +374,53 @@ public static void ActivateSilence(float duration)
     {
         alreadyAttacked = false;
     }
-    /*    private void OnDrawGizmosSelected()
+
+/* ===========================================
+Alerta em cadeia
+=============================================*/
+    
+    
+    
+    private void HandleAlert()
     {
-        Vector3 origin = transform.position + Vector3.up * 1.5f;
+        if (!alertsOthers) return;
 
-        // Alcance de visão (amarelo)
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, sightRange);
+        if (!playerInSightRange){
+            alertTimer = 0f;
+            alertSent = false;  
+            return;
+        }
 
-        // Alcance de visão quando o player está agachado (laranja)
-        Gizmos.color = new Color(1f, 0.5f, 0f);
-        Gizmos.DrawWireSphere(transform.position, sightRange * crochSight);
+        if (alertSent) return;
+        alertTimer += Time.deltaTime;
+        if (alertTimer >= alertDelay)
+        {
+            alertSent = true;
+            AlertNearbyEnemies();
+        }
+    }
+    private void AlertNearbyEnemies()
+    {
+        Vector3 lastKnown = player.position;
 
-        // Alcance de ataque (vermelho)
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        foreach (Enemy other in FindObjectsOfType<Enemy>())
+        {
+            if (other == null || other == this) continue;
+            if (Vector3.Distance(transform.position, other.transform.position) > alertRadius) continue;
 
-        // Cone de visão (ciano): duas linhas nos limites do ângulo + linha central
-        Gizmos.color = Color.cyan;
-        Vector3 left = Quaternion.Euler(0f, -angle / 2f, 0f) * transform.forward;
-        Vector3 right = Quaternion.Euler(0f, angle / 2f, 0f) * transform.forward;
+            other.HearSound(lastKnown);
+        }
 
-        Gizmos.DrawLine(origin, origin + left * sightRange);
-        Gizmos.DrawLine(origin, origin + right * sightRange);
-        Gizmos.DrawLine(origin, origin + transform.forward * sightRange);
-    }*/
+        foreach (EnemyMelee melee in FindObjectsOfType<EnemyMelee>())
+        {
+            if (melee == null) continue;
+            if (Vector3.Distance(transform.position, melee.transform.position) > alertRadius) continue;
+
+            melee.HearSound(lastKnown);
+        }
+    }
+
 
 
 }
 
-
-/* if(!alreadyAttacked)
- {
-     Rigidbody rb = Instantiate(projectile, transform.position, Quaternion.identity).GetComponent<Rigidbody>();
-     rb.AddForce(transform.forward * 32f, ForceMode.Impulse);
-     rb.AddForce(transform.up * 8f, ForceMode.Impulse);
-
-     alreadyAttacked = true;
-     Invoke(nameof(ResetAttack), attackCooldown);
-
- }*/
