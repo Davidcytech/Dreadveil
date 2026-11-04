@@ -38,6 +38,15 @@ public class EnemyMelee : MonoBehaviour
     private Vector3 soundPosition;
     private float searchTimer;
 
+    // Susto
+    public float scaredTime = 2f;
+    private bool isScared;
+    private float scaredTimer;
+    private bool wasPlayerInSightRange;
+
+    // Kick
+    public float hitDelay = 0.4f;   // tempo até o pontapé acertar (ajusta ao clip)
+
     private void Awake()
     {
         player = GameObject.Find("vBasicController_character").transform;
@@ -51,41 +60,45 @@ public class EnemyMelee : MonoBehaviour
     }
 
     private void Update()
+{
+    if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+        return;
+
+    if (anim != null)
+        anim.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
+
+    playerInSightRange = CanSeePlayer();
+
+    if (playerInSightRange && !wasPlayerInSightRange)
+        StartScare();
+
+    wasPlayerInSightRange = playerInSightRange;
+
+    if (playerInSightRange)
     {
-        // Agent inativo ou fora do NavMesh (ex.: inimigo abatido): não faz nada
-        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
-            return;
+        investigating = false;
 
-        if (anim != null)
-            anim.SetBool("IsMoving", agent.velocity.magnitude > 0.1f);
-
-        playerInSightRange = CanSeePlayer();
-
-        if (playerInSightRange)
+        if (isScared)
         {
-            investigating = false;
-            agent.isStopped = false;
-            agent.speed = chaseSpeed;
-            agent.SetDestination(player.position);
-
-            if (Time.time >= nextAttackTime &&
-                Vector3.Distance(transform.position, player.position) <= catchDistance)
-            {
-                playerScript.TakeDamage(damage);
-                nextAttackTime = Time.time + attackCooldown;
-            }
-        }
-        else if (investigating)
-        {
-            agent.speed = patrolSpeed;
-            Investigate();
+            Scared();
         }
         else
         {
-            agent.speed = patrolSpeed;
-            Patrol();
+            ChaseAndKick();
         }
     }
+    else
+    {
+        // perdeu o player de vista
+        if (isScared) EndScare();
+        SetRunning(false);
+
+        agent.speed = patrolSpeed;
+
+        if (investigating) Investigate();
+        else Patrol();
+    }
+}
 
     public void HearSound(Vector3 position)
     {
@@ -164,5 +177,97 @@ public class EnemyMelee : MonoBehaviour
 
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
             currentPoint = (currentPoint + 1) % patrolPoints.Length;
+    }
+
+    private void StartScare()
+    {
+        isScared = true;
+        scaredTimer = scaredTime;
+
+        agent.isStopped = true;
+        agent.ResetPath();
+
+        if (anim != null)
+        {
+            anim.SetBool("IsRunning", false);
+            anim.SetBool("IsScared", true);
+        }
+    }
+
+    private void Scared()
+    {
+        // fica parado, mas vira-se para o player
+        FacePlayer();
+
+        scaredTimer -= Time.deltaTime;
+
+        if (scaredTimer <= 0f)
+        {
+            EndScare();
+            SetRunning(true);   // no mesmo frame, para não haver "buracos" no Animator
+        }
+    }
+
+    private void EndScare()
+    {
+        isScared = false;
+        agent.isStopped = false;
+
+        if (anim != null)
+            anim.SetBool("IsScared", false);
+    }
+
+    private void ChaseAndKick()
+    {
+        float dist = Vector3.Distance(transform.position, player.position);
+
+        if (dist <= catchDistance)
+        {
+            // perto: pára e dá o pontapé
+            agent.isStopped = true;
+            FacePlayer();
+
+            if (Time.time >= nextAttackTime)
+            {
+                nextAttackTime = Time.time + attackCooldown;
+                if (anim != null) anim.SetTrigger("Kick");
+                Invoke(nameof(DealKickDamage), hitDelay);
+            }
+        }
+        else
+        {
+            // longe: corre atrás do player
+            SetRunning(true);
+            agent.isStopped = false;
+            agent.speed = chaseSpeed;
+            agent.SetDestination(player.position);
+        }
+    }
+
+    private void DealKickDamage()
+    {
+        // só causa dano se o player ainda estiver perto quando o pé acerta
+        if (isScared || playerScript == null) return;
+
+        if (Vector3.Distance(transform.position, player.position) <= catchDistance + 0.5f)
+            playerScript.TakeDamage(damage);
+    }
+
+    private void FacePlayer()
+    {
+        Vector3 direction = player.position - transform.position;
+        direction.y = 0f;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+    }
+
+    private void SetRunning(bool value)
+    {
+        if (anim != null)
+            anim.SetBool("IsRunning", value);
     }
 }
