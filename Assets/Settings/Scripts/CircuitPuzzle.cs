@@ -40,6 +40,9 @@ public class CircuitPuzzle : MonoBehaviour
 
     public bool IsSolved { get; private set; }
 
+    // Disparado uma vez quando o puzzle e resolvido.
+    public event System.Action OnSolved;
+
     // Oposto de cada direcao: Up<->Down, Right<->Left
     private readonly int[] opposite = { 2, 3, 0, 1 };
 
@@ -193,6 +196,8 @@ public class CircuitPuzzle : MonoBehaviour
                 victoryPanel.SetActive(true);
 
             Debug.Log("Circuit Puzzle concluído!");
+
+            OnSolved?.Invoke();
         }
     }
 
