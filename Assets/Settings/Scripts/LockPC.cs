@@ -1,18 +1,17 @@
+
 using UnityEngine;
 
-// Interagir com o PC abre o minigame; ao ganhar, fecha passado closeDelay segundos.
-public class LockPC : MonoBehaviour
+public class MinigamePC : MonoBehaviour
 {
     [Header("Jogador")]
     public GameObject player;
     public float interactDistance = 2f;
 
     [Header("Minigame")]
-    [Tooltip("Objeto que contém todo o minigame (Canvas ou Panel). Pode começar desligado.")]
     public GameObject minigamePanel;
     public CircuitPuzzle puzzle;
 
-    [Tooltip("Scripts a desligar enquanto o minigame está aberto (movimento, câmara, etc.).")]
+    [Tooltip("Scripts a desligar enquanto o minigame está aberto.")]
     public MonoBehaviour[] disableWhilePlaying;
 
     public KeyCode interactKey = KeyCode.F;
@@ -21,7 +20,7 @@ public class LockPC : MonoBehaviour
     [Tooltip("Segundos até o minigame fechar depois de ganhar.")]
     public float closeDelay = 4f;
 
-    [Header("Opcional: luz / material (ficam verdes ao ganhar)")]
+    [Header("Opcional: luz / material")]
     public Light ThingyLight;
     public Material material;
 
@@ -63,25 +62,23 @@ public class LockPC : MonoBehaviour
         if (minigamePanel != null)
             minigamePanel.SetActive(false);
 
-        if (puzzle != null)
-            puzzle.OnSolved += OnPuzzleSolved;
-        else
+        if (puzzle == null)
             Debug.LogError(name + ": falta atribuir o CircuitPuzzle!");
-    }
-
-    void OnDestroy()
-    {
-        if (puzzle != null)
-            puzzle.OnSolved -= OnPuzzleSolved;
     }
 
     void Update()
     {
-        if (player == null || IsCompleted)
+        if (player == null || IsCompleted || puzzle == null)
             return;
 
         if (isPlaying)
         {
+            if (puzzle.IsSolved)
+            {
+                OnPuzzleSolved();
+                return;
+            }
+
             if (Input.GetKeyDown(closeKey))
                 CloseMinigame();
 
@@ -99,7 +96,7 @@ public class LockPC : MonoBehaviour
 
     void OpenMinigame()
     {
-        if (minigamePanel == null)
+        if (minigamePanel == null || IsCompleted)
             return;
 
         isPlaying = true;
@@ -116,7 +113,12 @@ public class LockPC : MonoBehaviour
 
     void CloseMinigame()
     {
+        if (!isPlaying)
+            return;
+
         isPlaying = false;
+
+        CancelInvoke(nameof(CloseMinigame));
 
         if (minigamePanel != null)
             minigamePanel.SetActive(false);

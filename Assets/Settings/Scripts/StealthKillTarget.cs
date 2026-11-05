@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,6 +11,7 @@ public class StealthKillTarget : MonoBehaviour
 
     public Transform TakedownPoint => takedownPoint;
     public bool CanBeKilled => !isKilled;
+    public AudioSource doorSound;
 
     private Animator animator;
     private NavMeshAgent navMeshAgent;
@@ -57,6 +59,15 @@ public class StealthKillTarget : MonoBehaviour
         {
             col.isTrigger = true;
         }
+    }
+
+    public void KillWithKnife()
+    {
+        if (isKilled)
+            return;
+
+        StartTakedown();
+        FinishTakedown();
     }
 
     private void OnDrawGizmosSelected()

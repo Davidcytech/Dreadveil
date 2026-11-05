@@ -35,12 +35,17 @@ public class Player : MonoBehaviour
     private vThirdPersonController playerController;
     private vCrouchController crouchController;
 
+    // Ataque com faca
+    [Header("Ataque com Faca")]
+    public GameObject knifePrefab;
+    public Transform knifeSpawnPoint;
+    public float knifeCooldown = 2f;
+
+    private float knifeTimer;
 
     // Implementação dos power ups
-    // Energia power up
     private float timerEpoweup;
     public bool energyEpowerup => timerEpoweup > 0f;
-
 
     private void Start()
     {
@@ -61,12 +66,17 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        // adicionei isto para o powerup
         if (timerEpoweup > 0f)
-        {    
+        {
             timerEpoweup -= Time.deltaTime;
             energy = maxEnergy;
         }
+
+        if (knifeTimer > 0f)
+            knifeTimer -= Time.deltaTime;
+
+        if (!dead && Input.GetKeyDown(KeyCode.R))
+            ThrowKnife();
 
         if (dead || footstepsBlocked)
         {
@@ -92,9 +102,45 @@ public class Player : MonoBehaviour
 
         if (regenerationTimer >= regenerationInterval)
         {
-            energy = Mathf.Min(maxEnergy,energy + energyPerRegeneration);
+            energy = Mathf.Min(maxEnergy, energy + energyPerRegeneration);
             regenerationTimer = 0f;
         }
+    }
+
+    private void ThrowKnife()
+    {
+        if (knifePrefab == null || knifeSpawnPoint == null)
+            return;
+
+        if (knifeTimer > 0f)
+            return;
+
+        Camera cam = Camera.main;
+
+        if (cam == null)
+            return;
+
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        Vector3 targetPoint = ray.GetPoint(100f);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+            targetPoint = hit.point;
+
+        Vector3 direction = (targetPoint - knifeSpawnPoint.position).normalized;
+
+        GameObject knife = Instantiate(
+            knifePrefab,
+            knifeSpawnPoint.position,
+            Quaternion.LookRotation(direction)
+        );
+
+        KnifeProjectile projectile = knife.GetComponent<KnifeProjectile>();
+
+        if (projectile != null)
+            projectile.Launch(direction, transform);
+
+        knifeTimer = knifeCooldown;
     }
 
     private void HandleFootsteps()
@@ -175,20 +221,17 @@ public class Player : MonoBehaviour
             if (enemy == null)
                 continue;
 
-            float distance = Vector3.Distance(transform.position,enemy.transform.position);
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+
             if (distance <= soundRange)
-            {
                 enemy.HearSound(transform.position);
-            }
         }
     }
 
     public bool TryUseEnergy(float amount)
     {
-        // e isto tambem
-        if (energyEpowerup){
-           return true;
-        }
+        if (energyEpowerup)
+            return true;
 
         if (energyInhibited || energy < amount)
             return false;
@@ -237,9 +280,6 @@ public class Player : MonoBehaviour
 
     private IEnumerator EnergyInhibition(float duration)
     {
-        // para o power up energia
-    
-
         float savedEnergy = energy;
 
         energyInhibited = true;
@@ -262,8 +302,8 @@ public class Player : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void EnergyPowerup(float duration){
-
+    public void EnergyPowerup(float duration)
+    {
         if (inhibitionCoroutine != null)
         {
             StopCoroutine(inhibitionCoroutine);

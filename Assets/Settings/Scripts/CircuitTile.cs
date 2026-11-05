@@ -83,30 +83,34 @@ public class CircuitTile : MonoBehaviour
     }
 
     // Índices: 0 = Cima, 1 = Direita, 2 = Baixo, 3 = Esquerda
-    // A orientação base (rotation = 0) vem do CircuitPuzzle, no Inspector.
+    // Base da reta: horizontal (Direita + Esquerda)
+    // Base da curva: ┌ (Direita + Baixo)
+    // O CircuitPuzzle tem "Straight/Corner Sprite Rotation" para acertar com o sprite.
+    // Sprite novo da curva com rotation = 0: ┐ (Esquerda + Baixo) = 90 sobre a base ┌.
     public bool[] GetConnections()
     {
         bool[] connections = new bool[4];
-
-        CircuitDirection a;
-        CircuitDirection b;
+        int baseRotation = 0;
 
         if (type == TileType.Straight)
         {
-            a = puzzle != null ? puzzle.straightEndA : CircuitDirection.Right;
-            b = puzzle != null ? puzzle.straightEndB : CircuitDirection.Left;
+            connections[1] = true;
+            connections[3] = true;
+
+            if (puzzle != null)
+                baseRotation = puzzle.straightSpriteRotation;
         }
         else
         {
-            a = puzzle != null ? puzzle.cornerEndA : CircuitDirection.Right;
-            b = puzzle != null ? puzzle.cornerEndB : CircuitDirection.Down;
+            connections[1] = true;
+            connections[2] = true;
+
+            // Sem puzzle ligado, assume o sprite novo: ┐ (Esquerda + Baixo)
+            baseRotation = puzzle != null ? puzzle.cornerSpriteRotation : 90;
         }
 
-        connections[(int)a] = true;
-        connections[(int)b] = true;
-
         bool[] rotated = new bool[4];
-        int turns = (NormalizeRotation(rotation) / 90) % 4;
+        int turns = ((NormalizeRotation(baseRotation) + NormalizeRotation(rotation)) / 90) % 4;
 
         for (int i = 0; i < 4; i++)
         {

@@ -25,13 +25,11 @@ public class CircuitPuzzle : MonoBehaviour
     public CircuitDirection endDirection = CircuitDirection.Right;
 
     [Header("Orientacao dos sprites com rotation = 0")]
-    [Tooltip("As 2 pontas da reta quando rotation = 0")]
-    public CircuitDirection straightEndA = CircuitDirection.Right;
-    public CircuitDirection straightEndB = CircuitDirection.Left;
+    [Tooltip("Reta: 0 = horizontal, 90 = vertical (180 e 270 repetem)")]
+    public int straightSpriteRotation = 0;
 
-    [Tooltip("As 2 pontas da curva quando rotation = 0")]
-    public CircuitDirection cornerEndA = CircuitDirection.Right;
-    public CircuitDirection cornerEndB = CircuitDirection.Down;
+    [Tooltip("Curva com rotation = 0: 0 = ┌ (Dir+Baixo), 90 = ┐ (Esq+Baixo), 180 = ┘ (Esq+Cima), 270 = └ (Cima+Dir)")]
+    public int cornerSpriteRotation = 90;
 
     [Header("Debug")]
     public bool debugLog = false;
@@ -104,9 +102,13 @@ public class CircuitPuzzle : MonoBehaviour
     }
 
     // Lado da peça que está virado para o ponto (Start ou End).
+    // Usa o espaço LOCAL da Grid, por isso funciona mesmo que o Canvas esteja
+    // rodado ou espelhado no mundo (World Space).
     private CircuitDirection DirectionFromTo(Transform tile, Transform point)
     {
-        Vector3 delta = point.position - tile.position;
+        Vector3 tileLocal = grid.InverseTransformPoint(tile.position);
+        Vector3 pointLocal = grid.InverseTransformPoint(point.position);
+        Vector3 delta = pointLocal - tileLocal;
 
         if (Mathf.Abs(delta.x) >= Mathf.Abs(delta.y))
             return delta.x >= 0 ? CircuitDirection.Right : CircuitDirection.Left;
@@ -157,10 +159,10 @@ public class CircuitPuzzle : MonoBehaviour
 
                 switch ((CircuitDirection)d)
                 {
-                    case CircuitDirection.Up: newRow--; break;
+                    case CircuitDirection.Up:    newRow--; break;
                     case CircuitDirection.Right: newCol++; break;
-                    case CircuitDirection.Down: newRow++; break;
-                    case CircuitDirection.Left: newCol--; break;
+                    case CircuitDirection.Down:  newRow++; break;
+                    case CircuitDirection.Left:  newCol--; break;
                 }
 
                 if (newRow < 0 || newRow >= rows ||
