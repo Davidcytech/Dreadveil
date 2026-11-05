@@ -2287,6 +2287,81 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
+--- !u!1 &87033302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 87033303}
+  - component: {fileID: 87033305}
+  - component: {fileID: 87033304}
+  m_Layer: 5
+  m_Name: Victory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &87033303
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87033302}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 212835421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &87033304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87033302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &87033305
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87033302}
+  m_CullTransparentMesh: 1
 --- !u!4 &87164612 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26aceaac6a1636a4591827b51c1a41a4, type: 3}
@@ -2787,9 +2862,9 @@ MonoBehaviour:
   image: {fileID: 103795182}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &103795181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3651,9 +3726,9 @@ MonoBehaviour:
   image: {fileID: 140894863}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &140894862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4026,9 +4101,9 @@ MonoBehaviour:
   image: {fileID: 152903518}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &152903517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4177,9 +4252,9 @@ MonoBehaviour:
   image: {fileID: 153701682}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &153701681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4821,9 +4896,9 @@ MonoBehaviour:
   image: {fileID: 170090337}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &170090336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5054,9 +5129,9 @@ MonoBehaviour:
   image: {fileID: 182221959}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &182221958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5273,13 +5348,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b97305b441e73cf41ad8e7a9d3cfb389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitPuzzle
-  grid: {fileID: 0}
-  startTile: {fileID: 0}
-  endTile: {fileID: 0}
+  grid: {fileID: 186856961}
+  startPoint: {fileID: 1359218370}
+  endPoint: {fileID: 1308479418}
+  victoryPanel: {fileID: 87033302}
   columns: 7
   rows: 7
+  startTileNumber: 1
+  endTileNumber: 28
+  autoDetectDirections: 1
   startDirection: 0
   endDirection: 2
+  straightEndA: 1
+  straightEndB: 3
+  cornerEndA: 1
+  cornerEndB: 2
+  debugLog: 0
 --- !u!1 &194264354
 GameObject:
   m_ObjectHideFlags: 0
@@ -5554,6 +5638,7 @@ RectTransform:
   - {fileID: 181309831}
   - {fileID: 1359218370}
   - {fileID: 1308479418}
+  - {fileID: 87033303}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5757,11 +5842,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 230111298}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &230111297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5838,7 +5923,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6717,9 +6802,9 @@ MonoBehaviour:
   image: {fileID: 302449943}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &302449942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7034,9 +7119,9 @@ MonoBehaviour:
   image: {fileID: 325248677}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &325248676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7835,11 +7920,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 390564229}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &390564228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7916,7 +8001,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8296,9 +8381,9 @@ MonoBehaviour:
   image: {fileID: 407683731}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &407683730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9228,9 +9313,9 @@ MonoBehaviour:
   image: {fileID: 449897123}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &449897122
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9875,9 +9960,9 @@ MonoBehaviour:
   image: {fileID: 523484028}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &523484027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10634,11 +10719,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 595350171}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &595350170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10715,7 +10800,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10787,9 +10872,9 @@ MonoBehaviour:
   image: {fileID: 598539225}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &598539224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11055,11 +11140,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 610972515}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &610972514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11392,9 +11477,9 @@ MonoBehaviour:
   image: {fileID: 645700062}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &645700061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12103,9 +12188,9 @@ MonoBehaviour:
   image: {fileID: 747998540}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &747998539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12254,9 +12339,9 @@ MonoBehaviour:
   image: {fileID: 764367667}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &764367666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12785,9 +12870,9 @@ MonoBehaviour:
   image: {fileID: 803587489}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &803587488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13048,9 +13133,9 @@ MonoBehaviour:
   image: {fileID: 827082216}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &827082215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13536,9 +13621,9 @@ MonoBehaviour:
   image: {fileID: 851052798}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &851052797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13820,9 +13905,9 @@ MonoBehaviour:
   image: {fileID: 875835392}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &875835391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14264,9 +14349,9 @@ MonoBehaviour:
   image: {fileID: 922292731}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &922292730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15416,11 +15501,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 1038069907}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1038069906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15497,7 +15582,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17133,7 +17218,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17164,11 +17249,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 1133571897}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!1001 &1143839954
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18837,9 +18922,9 @@ MonoBehaviour:
   image: {fileID: 1291450937}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1291450936
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19634,9 +19719,9 @@ MonoBehaviour:
   image: {fileID: 1330102815}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1330102814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20148,9 +20233,9 @@ MonoBehaviour:
   image: {fileID: 1377650568}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1377650567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20409,11 +20494,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 1383062875}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1383062874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20490,7 +20575,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -20674,9 +20759,9 @@ MonoBehaviour:
   image: {fileID: 1407602398}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1407602397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21097,9 +21182,9 @@ MonoBehaviour:
   image: {fileID: 1450082613}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1450082612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21618,9 +21703,9 @@ MonoBehaviour:
   image: {fileID: 1500279091}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1500279090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22072,9 +22157,9 @@ MonoBehaviour:
   image: {fileID: 1566225617}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1566225616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22336,9 +22421,9 @@ MonoBehaviour:
   image: {fileID: 1592028025}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1592028024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22776,9 +22861,9 @@ MonoBehaviour:
   image: {fileID: 1630846820}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1630846819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22855,7 +22940,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -23509,11 +23594,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 1722525996}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1722525995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24775,11 +24860,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 1810091534}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1810091533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24856,7 +24941,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -24960,9 +25045,9 @@ MonoBehaviour:
   image: {fileID: 1831521302}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1831521301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25441,9 +25526,9 @@ MonoBehaviour:
   image: {fileID: 1873832631}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1873832630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25769,9 +25854,9 @@ MonoBehaviour:
   image: {fileID: 1883199913}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1883199912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25920,9 +26005,9 @@ MonoBehaviour:
   image: {fileID: 1886734986}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1886734985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26289,9 +26374,9 @@ MonoBehaviour:
   image: {fileID: 1899868181}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1899868180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26438,11 +26523,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircuitTile
   image: {fileID: 1900827844}
-  type: 0
+  type: 1
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1900827843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26519,7 +26604,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -26591,9 +26676,9 @@ MonoBehaviour:
   image: {fileID: 1904074160}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1904074159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26670,7 +26755,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 740f9828961a5bf46a95f177d66e45d3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bf53d02af61fa784da7b98024041342b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -26773,9 +26858,9 @@ MonoBehaviour:
   image: {fileID: 1926182578}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1926182577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27045,9 +27130,9 @@ MonoBehaviour:
   image: {fileID: 1959123802}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &1959123801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27532,9 +27617,9 @@ MonoBehaviour:
   image: {fileID: 2033789329}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &2033789328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28861,9 +28946,9 @@ MonoBehaviour:
   image: {fileID: 2117949257}
   type: 0
   rotation: 0
-  isPowered: 0
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
+  isPowered: 0
 --- !u!114 &2117949256
 MonoBehaviour:
   m_ObjectHideFlags: 0
