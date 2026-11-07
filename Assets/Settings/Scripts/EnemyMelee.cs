@@ -44,9 +44,6 @@ public class EnemyMelee : MonoBehaviour
     private float scaredTimer;
     private bool wasPlayerInSightRange;
 
-    // Kick
-    public float hitDelay = 0.4f;   // tempo até o pontapé acertar (ajusta ao clip)
-
     private void Awake()
     {
         player = GameObject.Find("vBasicController_character").transform;
@@ -231,7 +228,6 @@ public class EnemyMelee : MonoBehaviour
             {
                 nextAttackTime = Time.time + attackCooldown;
                 if (anim != null) anim.SetTrigger("Kick");
-                Invoke(nameof(DealKickDamage), hitDelay);
             }
         }
         else
@@ -244,14 +240,13 @@ public class EnemyMelee : MonoBehaviour
         }
     }
 
-    private void DealKickDamage()
-    {
-        // só causa dano se o player ainda estiver perto quando o pé acerta
-        if (isScared || playerScript == null) return;
+    public void DealKickDamage()
+{
+    if (isScared || playerScript == null) return;
 
-        if (Vector3.Distance(transform.position, player.position) <= catchDistance + 0.5f)
-            playerScript.TakeDamage(damage);
-    }
+    if (Vector3.Distance(transform.position, player.position) <= catchDistance + 0.5f)
+        playerScript.TakeDamage(damage);
+}
 
     private void FacePlayer()
     {
