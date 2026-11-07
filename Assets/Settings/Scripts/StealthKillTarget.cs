@@ -11,7 +11,7 @@ public class StealthKillTarget : MonoBehaviour
 
     public Transform TakedownPoint => takedownPoint;
     public bool CanBeKilled => !isKilled;
-    public AudioSource doorSound;
+    public AudioSource killSound;
 
     private Animator animator;
     private NavMeshAgent navMeshAgent;
