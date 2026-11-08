@@ -43,9 +43,17 @@ public class Player : MonoBehaviour
 
     private float knifeTimer;
 
+    // coletaveis para desbloquear faca
+    public int collectabelsOwend = 0;
+    public int collectabelsNeeded = 5;
+    public bool knifeUnlocked = false;
+
     // Implementação dos power ups
     private float timerEpoweup;
     public bool energyEpowerup => timerEpoweup > 0f;
+
+    private bool hasShieldPowerup = false;
+    public bool HasShieldPowerup => hasShieldPowerup;
 
     private void Start()
     {
@@ -75,9 +83,11 @@ public class Player : MonoBehaviour
         if (knifeTimer > 0f)
             knifeTimer -= Time.deltaTime;
 
-        if (!dead && Input.GetKeyDown(KeyCode.R))
-            ThrowKnife();
-
+        if (!dead && Input.GetKeyDown(KeyCode.R)){
+            if(knifeUnlocked){
+                ThrowKnife();
+            }
+        }
         if (dead || footstepsBlocked)
         {
             if (footstepsAudio != null && footstepsAudio.isPlaying)
@@ -244,6 +254,12 @@ public class Player : MonoBehaviour
     {
         if (dead)
             return;
+        // comentario super sexy, meti aqui a cena do power up de escudo
+        if (hasShieldPowerup)
+        {
+            hasShieldPowerup = false;
+            return; 
+        }
 
         health -= damage;
 
@@ -302,6 +318,7 @@ public class Player : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    // implementacao do power up de energia
     public void EnergyPowerup(float duration)
     {
         if (inhibitionCoroutine != null)
@@ -314,4 +331,27 @@ public class Player : MonoBehaviour
         timerEpoweup = duration;
         energy = maxEnergy;
     }
+
+    // Implementação do power up de escuro
+
+    public void ShieldPowerup()
+    {
+        hasShieldPowerup = true;
+    }
+
+    // IMPLEMENTEI A COISA DE APANHAR COLETAVEIS
+    public void AddCollecatbel()
+    {
+        collectabelsOwend++;
+        if (collectabelsOwend >= collectabelsNeeded && !knifeUnlocked)
+        {
+            knifeUnlocked = true;
+            Debug.Log("Faca Desbloqueada!");
+
+        }
+    }
+    
+
+
+
 }
