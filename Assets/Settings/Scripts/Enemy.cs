@@ -3,77 +3,98 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    private Animator anim;
+/* ===========================================
+Referências
+=============================================*/
 
+    private Animator anim;
+    private Player playerScript;
 
     public NavMeshAgent agent;
-
     public Transform player;
 
-    public LayerMask whatIsGround;
-    public LayerMask whatIsPlayer;
 
+/* ===========================================
+Patrulha
+=============================================*/
 
-    // Movimento de patrulha
-    public Transform[] patrolPoints;
-    private int currentPoint = 0;
+    public Transform[] patrolPoints;    // pontos para marcar rota do inimigo
+    private int currentPoint = 0;       // ponto de destino atual
 
-    // Ataque
-    public float attackCooldown;
-    public bool alreadyAttacked;
-    public GameObject projectile;
+/* ===========================================
+Visão e deteção
+=============================================*/
+    public float sightRange;            // distância máxima de visão
+    public float angle = 90f;           // ângulo do cone de visão
+    public float crochSight = 0.5f;     // multiplicador do alcance quando o player está agachado
+    public LayerMask visionMask;        // layers que o raycast de visão pode atingir
+    public bool playerInSightRange;     // se está a ver o player 
+    private bool wasPlayerInSightRange; 
 
-    // Susto
-    public float scaredTime = 1.5f;
-    private bool isScared;
-    private float scaredTimer;
+/* ===========================================
+Perseguição após perder de vista
+=============================================*/
 
-    //Estados do inimigo e deteção
-    public bool inhibitsPlayerEnergy;
-    public float inhibitionRadius = 8f;     // área à volta do inimigo onde o player é inibido
-    private const float inhibitionRefresh = 0.25f;
-    private Player playerScript;
-    private bool reachedSound;
-    public float sightRange;
-    public float attackRange;
-    public bool playerInSightRange;
-    public bool playerInAttackRange;
-    public LayerMask visionMask;
-    public float angle = 90f;
-    public float crochSight = 0.5f;
-    private bool wasPlayerInSightRange;
+    public float loseSightTime = 5f;    // tempo a perseguir depois de perder o player
+    private float lostSightTimer;       // temporizador de perda
+    private Vector3 lastSeenPosition;   // última posição onde o player foi visto
 
-    //==============================================
-    // para verificar a ultima posição vista e perseguir mais um poruco
-    //=============================================
-    public float loseSightTime = 5f;     // tempo a perseguir depois de perder o player
-    private float lostSightTimer;          // o temporizador de perda
-    private Vector3 lastSeenPosition;      // ultima posição onde o player foi visto
+/* ===========================================
+Audição
+=============================================*/
 
+    public float searchTime = 4f;       // tempo a procurar quando chega ao local do som
+    private bool investigating;         // está a ir investigar um som t/f
+    private bool reachedSound;          // já chegou ao local do som t/f
+    private Vector3 soundPosition;      // local do som
+    private float searchTimer;          // temporizador da procura
 
-
-
-    // Audição
-    private bool investigating;
-    private Vector3 soundPosition;
-    public float searchTime = 4f;     // tempo a procurar quando chega ao local
-    private float searchTimer;
-
-
-    // Esta parte é para a deteção em cadeia
-    public bool alertsOthers = true; // bool para alertar os outros
-    public float alertDelay = 2f;      // (susto) tempo para ver o player antes de avisar
-    public float alertRadius = 20f;    // quem estiver dentro deste raio é avisado
-    private float alertTimer;    // tempo de alerta
-    private bool alertSent;  // bool para verificar se o alarme ja foi enviado
-
-    
+    // Silêncio global: enquanto ativo, nenhum inimigo deste tipo ouve sons
     private static float silenceEndTime;
 
     public static void ActivateSilence(float duration)
     {
-      silenceEndTime = Mathf.Max(silenceEndTime, Time.time + duration);
+        silenceEndTime = Mathf.Max(silenceEndTime, Time.time + duration);
     }
+
+/* ===========================================
+Susto
+=============================================*/
+
+    public float scaredTime = 1.5f;     // tempo parado ao ver o player pela primeira vez
+    private bool isScared;
+    private float scaredTimer;
+
+/* ===========================================
+Ataque
+=============================================*/
+
+    public float attackRange;           // distância a que para e dispara
+    public bool playerInAttackRange;
+    public float attackCooldown;        // tempo entre disparos
+    public bool alreadyAttacked;        // true = em cooldown
+    public GameObject projectile;       // prefab da bala
+
+/* ===========================================
+Inibição de energia
+=============================================*/
+
+    public bool inhibitsPlayerEnergy;
+    public float inhibitionRadius = 8f;             // área onde o player é inibido
+    private const float inhibitionRefresh = 0.25f;  // duração renovada a cada frame na área
+
+/* ===========================================
+Alerta em cadeia
+=============================================*/
+
+    public bool alertsOthers = true;    // avisa os outros inimigos?
+    public float alertDelay = 2f;       // tempo a ver o player antes de avisar
+    public float alertRadius = 20f;     // quem estiver dentro deste raio é avisado
+    private float alertTimer;
+    private bool alertSent;             // já avisou neste avistamento?
+
+    
+
     private void Awake()
     {
         player = GameObject.Find("vBasicController_character").transform;
@@ -119,6 +140,12 @@ public class Enemy : MonoBehaviour
 
         playerInAttackRange = playerInSightRange && Vector3.Distance(transform.position, player.position) <= attackRange;
 
+        // Máquina de estados:
+        // 1. vê o player -> susto / ataque / perseguição
+        // 2. perdeu de vista -> vai à última posição
+        // 3. ouviu um som -> investiga
+        // 4. nada -> patrulha
+
         if (playerInSightRange)
         {
             investigating = false;
@@ -158,9 +185,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
+/* ===========================================
+Audição
+=============================================*/
+
     // Chamado pelo alarme (ou por qualquer outro som)
     public void HearSound(Vector3 position)
-    
     {
         if (Time.time < silenceEndTime)
         return;
@@ -185,6 +215,8 @@ public class Enemy : MonoBehaviour
         agent.isStopped = false;
         reachedSound = false;
     }
+
+    // Vai ao local do som, espera searchTime e volta à patrulha
     private void Investigate()
     {
         if (reachedSound)
@@ -217,6 +249,9 @@ public class Enemy : MonoBehaviour
         }
     }
 
+/* ===========================================
+Visão
+=============================================*/
 
     private bool EnemyWallDetection()
     {
@@ -261,6 +296,10 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
+/* ===========================================
+Patrulha e perseguição
+=============================================*/
+
     private void Patrolling()
     {
         if (patrolPoints.Length == 0)
@@ -286,11 +325,15 @@ public class Enemy : MonoBehaviour
 
     }
 
+/* ===========================================
+Ataque
+=============================================*/
+
     private void AttackPlayer()
     {
-        agent.SetDestination(transform.position);
+        agent.SetDestination(transform.position); //para
 
-        // transform.LookAt(player);
+        // olha para o player
         Vector3 direction = player.position - transform.position;
         direction.y = 0f;
 
@@ -299,7 +342,8 @@ public class Enemy : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
-
+ 
+        // dispara se não estiver em cooldown
         if (!alreadyAttacked)
         {
             GameObject bullet = Instantiate(projectile, transform.position + transform.forward * 1.2f + Vector3.up, Quaternion.LookRotation(direction));
@@ -315,6 +359,10 @@ public class Enemy : MonoBehaviour
             Invoke(nameof(ResetAttack), attackCooldown);
         }
     }
+
+/* ===========================================
+Susto
+=============================================*/
 
     private void StartScare()
     {
@@ -380,11 +428,12 @@ Alerta em cadeia
 =============================================*/
     
     
-    
+    // Depois de alertDelay segundos a ver o player, avisa os outros
     private void HandleAlert()
     {
         if (!alertsOthers) return;
 
+        // perdeu o player reinicia
         if (!playerInSightRange){
             alertTimer = 0f;
             alertSent = false;  
@@ -399,6 +448,8 @@ Alerta em cadeia
             AlertNearbyEnemies();
         }
     }
+
+    // Manda os inimigos dentro de alertRadius investigar onde o player está
     private void AlertNearbyEnemies()
     {
         Vector3 lastKnown = player.position;
