@@ -55,6 +55,9 @@ public class Player : MonoBehaviour
     private bool hasShieldPowerup = false;
     public bool HasShieldPowerup => hasShieldPowerup;
 
+    // dinamite
+    public bool hasdynamite = false;
+
     private void Start()
     {
         playerController = GetComponent<vThirdPersonController>();
@@ -88,6 +91,36 @@ public class Player : MonoBehaviour
                 ThrowKnife();
             }
         }
+        if (!dead && Input.GetKeyDown(KeyCode.F))
+{
+    Debug.Log("F carregado. hasdynamite = " + hasdynamite);
+
+    if (hasdynamite)
+    {
+        Vector3 origin = transform.position + Vector3.up * 1f;
+
+        if (Physics.Raycast(origin, transform.forward, out RaycastHit hit, 3f))
+        {
+            Debug.Log("Raycast acertou em: " + hit.collider.name);
+
+            Destroy parede = hit.collider.GetComponentInParent<Destroy>();
+            if (parede != null)
+            {
+                Debug.Log("Parede encontrada, a explodir");
+                parede.ExplodirParede();
+                hasdynamite = false;
+            }
+            else
+            {
+                Debug.Log("O objeto atingido não tem o script Destroy");
+            }
+        }
+        else
+        {
+            Debug.Log("Raycast não acertou em nada");
+        }
+    }
+}
         if (dead || footstepsBlocked)
         {
             if (footstepsAudio != null && footstepsAudio.isPlaying)
@@ -349,6 +382,12 @@ public class Player : MonoBehaviour
             Debug.Log("Faca Desbloqueada!");
 
         }
+    }
+
+    public void ApanharDinamite()
+    {
+        hasdynamite = true;
+        Debug.Log("Dinamite apanhada!");
     }
     
 
