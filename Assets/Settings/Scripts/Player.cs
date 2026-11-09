@@ -43,9 +43,20 @@ public class Player : MonoBehaviour
 
     private float knifeTimer;
 
+    // coletaveis para desbloquear faca
+    public int collectabelsOwend = 0;
+    public int collectabelsNeeded = 5;
+    public bool knifeUnlocked = false;
+
     // Implementação dos power ups
     private float timerEpoweup;
     public bool energyEpowerup => timerEpoweup > 0f;
+
+    private bool hasShieldPowerup = false;
+    public bool HasShieldPowerup => hasShieldPowerup;
+
+    // dinamite
+    public bool hasdynamite = false;
 
     private void Start()
     {
@@ -75,9 +86,41 @@ public class Player : MonoBehaviour
         if (knifeTimer > 0f)
             knifeTimer -= Time.deltaTime;
 
-        if (!dead && Input.GetKeyDown(KeyCode.R))
-            ThrowKnife();
+        if (!dead && Input.GetKeyDown(KeyCode.R)){
+            if(knifeUnlocked){
+                ThrowKnife();
+            }
+        }
+        if (!dead && Input.GetKeyDown(KeyCode.F))
+{
+    Debug.Log("F carregado. hasdynamite = " + hasdynamite);
 
+    if (hasdynamite)
+    {
+        Vector3 origin = transform.position + Vector3.up * 1f;
+
+        if (Physics.Raycast(origin, transform.forward, out RaycastHit hit, 3f))
+        {
+            Debug.Log("Raycast acertou em: " + hit.collider.name);
+
+            Destroy parede = hit.collider.GetComponentInParent<Destroy>();
+            if (parede != null)
+            {
+                Debug.Log("Parede encontrada, a explodir");
+                parede.ExplodirParede();
+                hasdynamite = false;
+            }
+            else
+            {
+                Debug.Log("O objeto atingido não tem o script Destroy");
+            }
+        }
+        else
+        {
+            Debug.Log("Raycast não acertou em nada");
+        }
+    }
+}
         if (dead || footstepsBlocked)
         {
             if (footstepsAudio != null && footstepsAudio.isPlaying)
@@ -244,6 +287,12 @@ public class Player : MonoBehaviour
     {
         if (dead)
             return;
+        // comentario super sexy, meti aqui a cena do power up de escudo
+        if (hasShieldPowerup)
+        {
+            hasShieldPowerup = false;
+            return; 
+        }
 
         health -= damage;
 
@@ -302,6 +351,7 @@ public class Player : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    // implementacao do power up de energia
     public void EnergyPowerup(float duration)
     {
         if (inhibitionCoroutine != null)
@@ -314,4 +364,33 @@ public class Player : MonoBehaviour
         timerEpoweup = duration;
         energy = maxEnergy;
     }
+
+    // Implementação do power up de escuro
+
+    public void ShieldPowerup()
+    {
+        hasShieldPowerup = true;
+    }
+
+    // IMPLEMENTEI A COISA DE APANHAR COLETAVEIS
+    public void AddCollecatbel()
+    {
+        collectabelsOwend++;
+        if (collectabelsOwend >= collectabelsNeeded && !knifeUnlocked)
+        {
+            knifeUnlocked = true;
+            Debug.Log("Faca Desbloqueada!");
+
+        }
+    }
+
+    public void ApanharDinamite()
+    {
+        hasdynamite = true;
+        Debug.Log("Dinamite apanhada!");
+    }
+    
+
+
+
 }
