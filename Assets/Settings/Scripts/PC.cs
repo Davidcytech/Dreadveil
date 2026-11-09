@@ -8,6 +8,9 @@ public class PC : MonoBehaviour
     public Material material;
     public float interactDistance = 2f;
 
+    public HackingMinigame minigame;     
+    private bool alreadyHacked;
+
     private Color originalBaseColor;
     private Color originalEmissionColor;
     private Color originalLightColor;
@@ -39,7 +42,7 @@ public class PC : MonoBehaviour
 
     void Update()
     {
-        if (player == null)
+        if (player == null || alreadyHacked)
             return;
 
         float distance = Vector3.Distance(
@@ -49,20 +52,31 @@ public class PC : MonoBehaviour
 
         if (distance <= interactDistance && Input.GetKeyDown(KeyCode.F))
         {
-            if (door != null)
-                door.isLocked = false;
+            // abre o minigame
+            if (minigame != null)
+                minigame.StartMinigame();
+            else
+                Unlock(); 
+        }
+    }
 
-            if (ThingyLight != null)
-                ThingyLight.color = Color.green;
+    public void Unlock()
+    {
+        alreadyHacked = true;
 
-            if (material != null)
-            {
-                if (hasBaseColor)
-                    material.SetColor("_BaseColor", Color.green);
+        if (door != null)
+            door.isLocked = false;
 
-                if (hasEmissionColor)
-                    material.SetColor("_EmissionColor", Color.green);
-            }
+        if (ThingyLight != null)
+            ThingyLight.color = Color.green;
+
+        if (material != null)
+        {
+            if (hasBaseColor)
+                material.SetColor("_BaseColor", Color.green);
+
+            if (hasEmissionColor)
+                material.SetColor("_EmissionColor", Color.green);
         }
     }
 
