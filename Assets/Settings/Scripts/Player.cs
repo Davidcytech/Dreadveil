@@ -1,6 +1,7 @@
-
 using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using Invector.vCharacterController;
 
@@ -40,8 +41,14 @@ public class Player : MonoBehaviour
     public GameObject knifePrefab;
     public Transform knifeSpawnPoint;
     public float knifeCooldown = 2f;
+    public float knifeAimDistance = 100f;
+    [Tooltip("Quantas cópias da faca são criadas no início (= quantos lançamentos tens)")]
+    public int knifeCount = 3;
 
     private float knifeTimer;
+
+    // Cópias da faca já criadas (desligadas) à espera de serem lançadas.
+    private readonly List<GameObject> knifeStock = new List<GameObject>();
 
     // coletaveis para desbloquear faca
     public int collectabelsOwend = 0;
@@ -67,6 +74,8 @@ public class Player : MonoBehaviour
         stepTimer = 0f;
         wasMoving = false;
 
+        CreateKnifeStock();
+
         if (footstepsAudio != null)
         {
             footstepsAudio.playOnAwake = false;
@@ -86,41 +95,45 @@ public class Player : MonoBehaviour
         if (knifeTimer > 0f)
             knifeTimer -= Time.deltaTime;
 
-        if (!dead && Input.GetKeyDown(KeyCode.R)){
-            if(knifeUnlocked){
+        if (!dead && Input.GetKeyDown(KeyCode.R))
+        {
+            if (knifeUnlocked)
+            {
                 ThrowKnife();
             }
         }
+
         if (!dead && Input.GetKeyDown(KeyCode.F))
-{
-    Debug.Log("F carregado. hasdynamite = " + hasdynamite);
-
-    if (hasdynamite)
-    {
-        Vector3 origin = transform.position + Vector3.up * 1f;
-
-        if (Physics.Raycast(origin, transform.forward, out RaycastHit hit, 3f))
         {
-            Debug.Log("Raycast acertou em: " + hit.collider.name);
+            Debug.Log("F carregado. hasdynamite = " + hasdynamite);
 
-            Destroy parede = hit.collider.GetComponentInParent<Destroy>();
-            if (parede != null)
+            if (hasdynamite)
             {
-                Debug.Log("Parede encontrada, a explodir");
-                parede.ExplodirParede();
-                hasdynamite = false;
-            }
-            else
-            {
-                Debug.Log("O objeto atingido não tem o script Destroy");
+                Vector3 origin = transform.position + Vector3.up * 1f;
+
+                if (Physics.Raycast(origin, transform.forward, out RaycastHit hit, 3f))
+                {
+                    Debug.Log("Raycast acertou em: " + hit.collider.name);
+
+                    Destroy parede = hit.collider.GetComponentInParent<Destroy>();
+                    if (parede != null)
+                    {
+                        Debug.Log("Parede encontrada, a explodir");
+                        parede.ExplodirParede();
+                        hasdynamite = false;
+                    }
+                    else
+                    {
+                        Debug.Log("O objeto atingido não tem o script Destroy");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Raycast não acertou em nada");
+                }
             }
         }
-        else
-        {
-            Debug.Log("Raycast não acertou em nada");
-        }
-    }
-}
+
         if (dead || footstepsBlocked)
         {
             if (footstepsAudio != null && footstepsAudio.isPlaying)
@@ -153,10 +166,19 @@ public class Player : MonoBehaviour
     private void ThrowKnife()
     {
         if (knifePrefab == null || knifeSpawnPoint == null)
+        {
+            Debug.LogWarning("Faca: falta atribuir o Knife Prefab ou o Knife Spawn Point no Player!");
             return;
+        }
 
         if (knifeTimer > 0f)
             return;
+
+        if (knifeStock.Count == 0)
+        {
+            Debug.Log("Faca: já não tens facas.");
+            return;
+        }
 
         Camera cam = Camera.main;
 
@@ -165,25 +187,116 @@ public class Player : MonoBehaviour
 
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        Vector3 targetPoint = ray.GetPoint(100f);
+        Vector3 targetPoint = ray.GetPoint(knifeAimDistance);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        // A câmara fica atrás do player, por isso o raio passa primeiro pelo
+        // próprio player. Ignora tudo o que está antes do ponto de lançamento,
+        // o próprio player (e o modelo dele) e triggers.
+        float minDistance = Mathf.Max(
+            0f,
+            Vector3.Dot(knifeSpawnPoint.position - ray.origin, ray.direction)
+        );
+
+        RaycastHit[] hits = Physics.RaycastAll(
+            ray,
+            knifeAimDistance,
+            ~0,
+            QueryTriggerInteraction.Ignore
+        );
+
+        Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.distance < minDistance)
+                continue;
+
+            Transform t = hit.collider.transform;
+
+            if (t == transform || t.IsChildOf(transform))
+                continue;
+
             targetPoint = hit.point;
+            break;
+        }
 
         Vector3 direction = (targetPoint - knifeSpawnPoint.position).normalized;
 
-        GameObject knife = Instantiate(
-            knifePrefab,
+        // Tira UMA cópia do stock e lança-a.
+        GameObject knife = knifeStock[knifeStock.Count - 1];
+        knifeStock.RemoveAt(knifeStock.Count - 1);
+        knifeCount = knifeStock.Count;
+
+        if (knife == null)
+            return;
+
+        knife.transform.SetPositionAndRotation(
             knifeSpawnPoint.position,
             Quaternion.LookRotation(direction)
         );
 
+        knife.SetActive(true);
+
         KnifeProjectile projectile = knife.GetComponent<KnifeProjectile>();
 
-        if (projectile != null)
-            projectile.Launch(direction, transform);
+        if (projectile == null)
+            projectile = knife.AddComponent<KnifeProjectile>();
+
+        projectile.Launch(direction, transform);
+
+        Debug.Log("Faca lançada. Restam " + knifeStock.Count);
 
         knifeTimer = knifeCooldown;
+    }
+
+    // Cria as cópias da faca (uma por lançamento). O original nunca é usado nem destruído.
+    private void CreateKnifeStock()
+    {
+        if (knifePrefab == null)
+            return;
+
+        int amount = knifeCount;
+
+        for (int i = 0; i < amount; i++)
+            knifeStock.Add(CreateKnifeCopy());
+
+        // Se o original é um objeto da cena com KnifeProjectile, desliga-o
+        // (as cópias já foram feitas) para ele não andar nem desaparecer.
+        if (knifePrefab.scene.IsValid())
+        {
+            KnifeProjectile original = knifePrefab.GetComponent<KnifeProjectile>();
+
+            if (original != null)
+                original.enabled = false;
+        }
+
+        knifeCount = knifeStock.Count;
+        Debug.Log("Facas prontas: " + knifeStock.Count);
+    }
+
+    private GameObject CreateKnifeCopy()
+    {
+        GameObject copy = Instantiate(knifePrefab);
+        copy.name = knifePrefab.name + "_Copia";
+        copy.transform.SetParent(null);
+
+        // Mantém o tamanho que o original tem no mundo.
+        copy.transform.localScale = knifePrefab.transform.lossyScale;
+
+        copy.SetActive(false);
+        return copy;
+    }
+
+    // Para apanhar facas no mapa (opcional).
+    public void AddKnives(int amount)
+    {
+        if (knifePrefab == null)
+            return;
+
+        for (int i = 0; i < amount; i++)
+            knifeStock.Add(CreateKnifeCopy());
+
+        knifeCount = knifeStock.Count;
     }
 
     private void HandleFootsteps()
@@ -291,7 +404,7 @@ public class Player : MonoBehaviour
         if (hasShieldPowerup)
         {
             hasShieldPowerup = false;
-            return; 
+            return;
         }
 
         health -= damage;
@@ -389,8 +502,4 @@ public class Player : MonoBehaviour
         hasdynamite = true;
         Debug.Log("Dinamite apanhada!");
     }
-    
-
-
-
 }

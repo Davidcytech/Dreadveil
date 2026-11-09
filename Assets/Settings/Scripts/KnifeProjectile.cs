@@ -7,6 +7,13 @@ public class KnifeProjectile : MonoBehaviour
     public float speed = 25f;
     public float maxDistance = 30f;
 
+    [Header("Aspeto")]
+    [Tooltip("Roda o modelo se a seringa aparecer de lado (ex.: 90, 0, 0 ou 0, 90, 0)")]
+    public Vector3 modelRotationOffset = Vector3.zero;
+
+    [Header("Debug")]
+    public bool debugLog = false;
+
     [Header("Barulho (igual ao ataque brutal)")]
     public bool makesNoise = true;
     public float soundHearingRadius = 15f;
@@ -69,7 +76,10 @@ public class KnifeProjectile : MonoBehaviour
 
         owner = player;
         startPosition = transform.position;
-        transform.forward = direction;
+        transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(modelRotationOffset);
+
+        if (debugLog)
+            Debug.Log(name + " lançada | dir = " + direction + " | speed = " + speed);
     }
 
     private void Update()
@@ -103,6 +113,9 @@ public class KnifeProjectile : MonoBehaviour
             if (target != null && !target.CanBeKilled)
                 continue;
 
+            if (debugLog)
+                Debug.Log(name + " bateu em: " + hit.collider.name);
+
             if (target != null)
             {
                 target.KillWithKnife(direction);
@@ -119,7 +132,12 @@ public class KnifeProjectile : MonoBehaviour
         transform.position += direction * step;
 
         if (Vector3.Distance(startPosition, transform.position) >= maxDistance)
+        {
+            if (debugLog)
+                Debug.Log(name + " destruída: distância máxima");
+
             Destroy(gameObject);
+        }
     }
 
     private void AlertNearbyEnemies(StealthKillTarget victim)
