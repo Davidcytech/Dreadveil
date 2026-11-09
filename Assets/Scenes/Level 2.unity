@@ -3919,7 +3919,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1139430396}
   m_SourcePrefab: {fileID: 100100000, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
 --- !u!1 &137810902
 GameObject:
@@ -8559,9 +8562,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2.7416096
+  m_Height: 3.0135524
   m_Direction: 1
-  m_Center: {x: 0, y: 1.2477355, z: 0}
+  m_Center: {x: 0, y: 1.3837069, z: 0}
 --- !u!195 &381551518
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -8580,10 +8583,64 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2.67
+  m_Height: 2.97
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &381551521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381551514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e0b6374c1904884784a8d1567a11b27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAttacks
+  spikeRange: 12
+  spikeCount: 5
+  spikeInterval: 0.6
+  spikeDelay: 1
+  spikeRadius: 1
+  spikeDamage: 100
+  spikeAnimDuration: 1
+  slamTriggerRange: 4.5
+  slamRadius: 3.5
+  slamWindup: 1.8
+  slamDamage: 100
+  jumpDodgeHeight: 0.8
+--- !u!114 &381551522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381551514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a28dfeb315fe9d8458b334d358f8aec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Boss
+  patrolCenter: {fileID: 0}
+  patrolRadius: 15
+  patrolSpeed: 2
+  waitTimeAtPoint: 3
+  chaseSpeed: 5
+  loseSightTime: 3
+  sightRange: 15
+  angle: 130
+  crouchSight: 0.5
+  visionMask:
+    serializedVersion: 2
+    m_Bits: 8
+  attackCooldown: 1
+  backstabsToKill: 3
+  backstabAngle: 60
+  backstabCooldown: 1.5
+  backstabsTaken: 0
+  playerInSightRange: 0
 --- !u!1 &390564225
 GameObject:
   m_ObjectHideFlags: 0
@@ -17829,7 +17886,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1697002033}
   m_SourcePrefab: {fileID: 100100000, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
 --- !u!1 &1122039993
 GameObject:
@@ -18493,6 +18553,32 @@ MonoBehaviour:
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
   unpoweredColor: {r: 1, g: 1, b: 1, a: 1}
   isPowered: 0
+--- !u!1 &1139430392 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
+  m_PrefabInstance: {fileID: 137575086}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1139430396
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1139430392}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.198622, y: 2.7996087, z: 2.5567536}
+  m_Center: {x: 0, y: 1.3998044, z: 0}
 --- !u!1001 &1143839954
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23687,7 +23773,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -16.08
+      value: -14.09
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23743,6 +23829,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 381551517}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 381551522}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 381551521}
   m_SourcePrefab: {fileID: 100100000, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
 --- !u!1001 &1546997066
 PrefabInstance:
@@ -25331,6 +25423,32 @@ Transform:
   - {fileID: 606230754}
   m_Father: {fileID: 870621577}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1697002029 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
+  m_PrefabInstance: {fileID: 1110843663}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1697002033
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697002029}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.198622, y: 2.7996087, z: 2.5567536}
+  m_Center: {x: 0, y: 1.3998044, z: 0}
 --- !u!1 &1698369133 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5659115922752199984, guid: 68bfedfd3b00ec94b9205b6e588465cd, type: 3}

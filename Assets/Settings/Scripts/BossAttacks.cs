@@ -15,6 +15,7 @@ public class BossAttacks : MonoBehaviour
     public float spikeDelay = 1f;
     public float spikeRadius = 1f;
     public float spikeDamage = 2000f;
+    public float spikeAnimDuration = 1.5f;   // duração do clip de ataque
 
     //slam attack
     public float slamTriggerRange = 4.5f;
@@ -38,16 +39,25 @@ public class BossAttacks : MonoBehaviour
 
     public IEnumerator SpikeAttack()
     {
+        // 1) Fase da animação: parado, virado para o player, uma única vez
+        boss.SetChasingDuringAttack(false);
+        FaceTarget(player.position);
+        boss.PlayAttackAnimation();
+
+        yield return new WaitForSeconds(spikeAnimDuration);
+
+        if (boss.IsDead || player == null)
+            yield break;
+
+        // 2) Fase dos espinhos: persegue o player enquanto caem
+        boss.SetChasingDuringAttack(true);
+
         for (int i = 0; i < spikeCount; i++)
         {
-            if (boss.IsDead || player == null){
+            if (boss.IsDead || player == null)
                 yield break;
-            }
-
-            FaceTarget(player.position);
 
             StartCoroutine(SpikeRoutine(player.position));
-
             yield return new WaitForSeconds(spikeInterval);
         }
 
@@ -90,6 +100,9 @@ public class BossAttacks : MonoBehaviour
 
     public IEnumerator SlamAttack()
     {
+        if (player != null) FaceTarget(player.position);
+        boss.PlayAttackAnimation();
+
         GameObject warning = CreateDisc(transform.position,slamRadius,new Color(1f, 0.5f, 0f));
         float t = 0f;
 
