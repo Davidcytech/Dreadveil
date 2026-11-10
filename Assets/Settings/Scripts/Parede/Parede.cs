@@ -7,6 +7,7 @@ public class Destroy : MonoBehaviour
     public GameObject dinamitePrefab;          // dinamite que aparece na parede (prefab)
     public float tempoParaExplodir = 3f;
     public Vector3 offsetDinamite = Vector3.zero;   // ajuste fino da posição
+    public float tempoParaLimpar = 5f; 
 
     private bool jaExplodiu = false;
 
@@ -36,8 +37,15 @@ public class Destroy : MonoBehaviour
 
         if (dinamite != null) Destroy(dinamite);
 
-        if (objetoDestruidoPrefab != null)
-            Instantiate(objetoDestruidoPrefab, transform.position, transform.rotation);
+       if (objetoDestruidoPrefab != null)
+        {
+            GameObject partida = Instantiate(objetoDestruidoPrefab, transform.position, transform.rotation);
+
+            // NOVO: apaga os pedaços passado o tempo
+            if (tempoParaLimpar > 0f)
+                Object.Destroy(partida, tempoParaLimpar);
+        }
+
 
         Destroy(gameObject);
     }
