@@ -55,6 +55,9 @@ public class Player : MonoBehaviour
     public int collectabelsNeeded = 5;
     public bool knifeUnlocked = false;
 
+    // minigames completos
+    public int minigamesCompletos = 0;
+
     // Implementação dos power ups
     private float timerEpoweup;
     public bool energyEpowerup => timerEpoweup > 0f;
@@ -495,6 +498,18 @@ public class Player : MonoBehaviour
             Debug.Log("Faca Desbloqueada!");
 
         }
+    }
+
+    // Chamado pelo MinigamePC2 quando o jogador ganha um minigame.
+    public void AddMinigameCompleto()
+    {
+        minigamesCompletos++;
+        Debug.Log("Minigames completos: " + minigamesCompletos);
+
+        if (BigDoorManager.Instance != null)
+            BigDoorManager.Instance.AtualizarPortas(minigamesCompletos);
+        else
+            Debug.LogError("BigDoorManager.Instance é NULL!");
     }
 
     public void ApanharDinamite()

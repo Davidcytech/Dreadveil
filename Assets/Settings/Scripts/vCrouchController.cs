@@ -81,6 +81,6 @@ public virtual void ToggleCrouch()
         foreach (var clip in clipInfo)
             clipNames += clip.clip.name + " ";
 
-        Debug.Log($"[Crouch Debug] isCrouching: {isCrouching} | Estado alvo: {currentCrouchState} | Clip(s) a tocar: {clipNames}");
+       
     }
 }

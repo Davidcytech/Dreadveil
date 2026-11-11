@@ -1,7 +1,6 @@
-
 using UnityEngine;
 
-public class MinigamePC : MonoBehaviour
+public class MinigamePC2 : MonoBehaviour
 {
     [Header("Jogador")]
     public GameObject player;
@@ -64,6 +63,14 @@ public class MinigamePC : MonoBehaviour
 
         if (puzzle == null)
             Debug.LogError(name + ": falta atribuir o CircuitPuzzle!");
+        else
+            puzzle.OnSolved += OnPuzzleSolved;
+    }
+
+    void OnDestroy()
+    {
+        if (puzzle != null)
+            puzzle.OnSolved -= OnPuzzleSolved;
     }
 
     void Update()
@@ -147,6 +154,14 @@ public class MinigamePC : MonoBehaviour
             return;
 
         IsCompleted = true;
+        Debug.Log(name + ": puzzle resolvido!");
+
+        Player p = player != null ? player.GetComponent<Player>() : null;
+
+        if (p != null)
+            p.AddMinigameCompleto();
+        else
+            Debug.LogError(name + ": o objeto Player não tem o script Player!");
 
         if (ThingyLight != null)
             ThingyLight.color = Color.green;
