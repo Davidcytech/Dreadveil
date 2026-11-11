@@ -8,22 +8,13 @@ public class StealthKillTarget : MonoBehaviour
     [SerializeField] private Transform takedownPoint;
 
     [Header("Knife Kill (longo alcance)")]
-    [Tooltip("Estado do Animator do inimigo a tocar (o mesmo do ataque brutal)")]
-    [SerializeField] private string knifeDeathStateName = "BrutalTaker";
-    [Tooltip("Duração da animação antes de o inimigo ficar congelado no chão")]
-    [SerializeField] private float knifeAnimationDuration = 2.5f;
-    [Tooltip("Estado do Animator em que o inimigo fica deitado (o mesmo de quando morre). Deixa vazio para desativar.")]
-    [SerializeField] private string lyingStateName = "";
-    [Tooltip("Segundos até o inimigo acabar de ficar deitado antes de congelar")]
-    [SerializeField] private float lyingStateDuration = 1.5f;
-    [Tooltip("Vira o inimigo na direção da faca (como se o player estivesse atrás dele)")]
-    [SerializeField] private bool faceKnifeDirection = true;
+    [Tooltip("Estado do Animator do inimigo a tocar")]
+    [SerializeField] private string knifeDeathStateName = "RangeTaker";
 
     private bool isKilled = false;
 
     public Transform TakedownPoint => takedownPoint;
     public bool CanBeKilled => !isKilled;
-    public AudioSource killSound;
 
     private Animator animator;
     private NavMeshAgent navMeshAgent;
@@ -53,7 +44,6 @@ public class StealthKillTarget : MonoBehaviour
             if (ai == null)
                 continue;
 
-            // Cancela Invokes pendentes (ex.: pontapé do EnemyMelee a meio) e desliga a IA.
             ai.CancelInvoke();
             ai.enabled = false;
         }
@@ -92,23 +82,13 @@ public class StealthKillTarget : MonoBehaviour
         KillWithKnife(transform.forward);
     }
 
+    // O parâmetro mantém-se para não partir quem chama este método, mas já não é usado.
     public void KillWithKnife(Vector3 knifeDirection)
     {
         if (isKilled)
             return;
 
         StartTakedown();
-
-        if (faceKnifeDirection)
-        {
-            knifeDirection.y = 0f;
-
-            if (knifeDirection.sqrMagnitude > 0.001f)
-                transform.rotation = Quaternion.LookRotation(knifeDirection);
-        }
-
-        if (killSound != null)
-            killSound.Play();
 
         if (animator != null && !string.IsNullOrEmpty(knifeDeathStateName))
         {
@@ -123,13 +103,19 @@ public class StealthKillTarget : MonoBehaviour
 
     private IEnumerator KnifeKillRoutine()
     {
-        yield return new WaitForSeconds(knifeAnimationDuration);
-
-        // Passa para o estado deitado antes de congelar o inimigo.
-        if (animator != null && !string.IsNullOrEmpty(lyingStateName))
+        // Espera que o Animator entre no estado (máx. 1 s, por segurança)
+        float timeout = 1f;
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(knifeDeathStateName) && timeout > 0f)
         {
-            animator.CrossFade(lyingStateName, 0.25f, 0);
-            yield return new WaitForSeconds(lyingStateDuration);
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+
+        // Espera que o estado acabe
+        while (animator.GetCurrentAnimatorStateInfo(0).IsName(knifeDeathStateName) &&
+               animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        {
+            yield return null;
         }
 
         FinishTakedown();

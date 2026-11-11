@@ -726,12 +726,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1414515009}
-  knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
+  knifeDeathStateName: RangeTaker
 --- !u!114 &15620397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12816,12 +12811,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1264321616}
-  knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
+  knifeDeathStateName: RangeTaker
 --- !u!114 &394389623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16774,11 +16764,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f061015524af754f9d416d5df243aad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorUnlock
-  remainingMinigames: 2
-  openDistance: -0.35
-  openSpeed: 0.5
-  closedPosition: {x: 0, y: 0, z: 0}
-  isUnlocked: 0
 --- !u!1 &579096137
 GameObject:
   m_ObjectHideFlags: 0
@@ -18747,12 +18732,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1360249248}
-  knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
+  knifeDeathStateName: RangeTaker
 --- !u!114 &631731792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19842,12 +19822,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1651710980}
-  knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
+  knifeDeathStateName: RangeTaker
 --- !u!114 &663537713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27341,12 +27316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 663024572}
-  knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
+  knifeDeathStateName: RangeTaker
 --- !u!114 &980124817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38810,11 +38780,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f061015524af754f9d416d5df243aad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorUnlock
-  remainingMinigames: 2
-  openDistance: -0.35
-  openSpeed: 0.5
-  closedPosition: {x: 0, y: 0, z: 0}
-  isUnlocked: 0
 --- !u!1 &1490045102
 GameObject:
   m_ObjectHideFlags: 0
@@ -53640,11 +53605,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f061015524af754f9d416d5df243aad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorUnlock
-  remainingMinigames: 2
-  openDistance: -0.35
-  openSpeed: 0.5
-  closedPosition: {x: 0, y: 0, z: 0}
-  isUnlocked: 0
 --- !u!23 &3943246946490820
 MeshRenderer:
   m_ObjectHideFlags: 0
