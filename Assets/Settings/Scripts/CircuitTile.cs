@@ -51,6 +51,7 @@ public class CircuitTile : MonoBehaviour
 
     public void SetPuzzle(CircuitPuzzle circuitPuzzle)
     {
+ 
         puzzle = circuitPuzzle;
         rotation = NormalizeRotation(rotation);
         UpdateRotation();

@@ -106,6 +106,11 @@ public class CircuitPuzzle : MonoBehaviour
     // rodado ou espelhado no mundo (World Space).
     private CircuitDirection DirectionFromTo(Transform tile, Transform point)
     {
+        Debug.Log(
+    "Tile: " + tile.name +
+    " | Tile Local: " + grid.InverseTransformPoint(tile.position) +
+    " | Point Local: " + grid.InverseTransformPoint(point.position)
+);
         Vector3 tileLocal = grid.InverseTransformPoint(tile.position);
         Vector3 pointLocal = grid.InverseTransformPoint(point.position);
         Vector3 delta = pointLocal - tileLocal;
