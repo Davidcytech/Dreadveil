@@ -24,13 +24,6 @@ public class CircuitPuzzle : MonoBehaviour
     public CircuitDirection startDirection = CircuitDirection.Left;
     public CircuitDirection endDirection = CircuitDirection.Right;
 
-    [Header("Orientacao dos sprites com rotation = 0")]
-    [Tooltip("Reta: 0 = horizontal, 90 = vertical (180 e 270 repetem)")]
-    public int straightSpriteRotation = 0;
-
-    [Tooltip("Curva com rotation = 0: 0 = ┌ (Dir+Baixo), 90 = ┐ (Esq+Baixo), 180 = ┘ (Esq+Cima), 270 = └ (Cima+Dir)")]
-    public int cornerSpriteRotation = 90;
-
     [Header("Debug")]
     public bool debugLog = false;
 
@@ -83,17 +76,10 @@ public class CircuitPuzzle : MonoBehaviour
         for (int i = 0; i < tiles.Length; i++)
         {
             tiles[i].SetPuzzle(this);
-            tiles[i].SetPowered(false);
+            tiles[i].ResetTile();
         }
 
-        if (autoDetectDirections)
-        {
-            startDirection = DirectionFromTo(tiles[startTileNumber - 1].transform, startPoint);
-            endDirection = DirectionFromTo(tiles[endTileNumber - 1].transform, endPoint);
-        }
-
-        if (debugLog || autoDetectDirections)
-            Debug.Log("Start Direction = " + startDirection + " | End Direction = " + endDirection);
+        RefreshDirections();
 
         if (victoryPanel != null)
             victoryPanel.SetActive(false);
@@ -101,16 +87,27 @@ public class CircuitPuzzle : MonoBehaviour
         CheckPower();
     }
 
+    // Recalcula as direcoes do Start/End (se autoDetect estiver ligado).
+    // Chamado em cada verificacao para apanhar mudancas de layout/posicao.
+    private void RefreshDirections()
+    {
+        if (!autoDetectDirections || tiles == null)
+            return;
+
+        Canvas.ForceUpdateCanvases();
+
+        startDirection = DirectionFromTo(tiles[startTileNumber - 1].transform, startPoint);
+        endDirection = DirectionFromTo(tiles[endTileNumber - 1].transform, endPoint);
+
+        if (debugLog)
+            Debug.Log("Start Direction = " + startDirection + " | End Direction = " + endDirection);
+    }
+
     // Lado da peça que está virado para o ponto (Start ou End).
     // Usa o espaço LOCAL da Grid, por isso funciona mesmo que o Canvas esteja
     // rodado ou espelhado no mundo (World Space).
     private CircuitDirection DirectionFromTo(Transform tile, Transform point)
     {
-        Debug.Log(
-    "Tile: " + tile.name +
-    " | Tile Local: " + grid.InverseTransformPoint(tile.position) +
-    " | Point Local: " + grid.InverseTransformPoint(point.position)
-);
         Vector3 tileLocal = grid.InverseTransformPoint(tile.position);
         Vector3 pointLocal = grid.InverseTransformPoint(point.position);
         Vector3 delta = pointLocal - tileLocal;
@@ -121,10 +118,29 @@ public class CircuitPuzzle : MonoBehaviour
         return delta.y >= 0 ? CircuitDirection.Up : CircuitDirection.Down;
     }
 
+    // Repoe o puzzle ao estado inicial (usar quando o jogador morre / recomeça).
+    public void ResetPuzzle()
+    {
+        if (tiles == null)
+            return;
+
+        IsSolved = false;
+
+        for (int i = 0; i < tiles.Length; i++)
+            tiles[i].ResetTile();
+
+        if (victoryPanel != null)
+            victoryPanel.SetActive(false);
+
+        CheckPower();
+    }
+
     public void CheckPower()
     {
         if (tiles == null || IsSolved)
             return;
+
+        RefreshDirections();
 
         bool[] powered = new bool[tiles.Length];
         Queue<int> queue = new Queue<int>();
@@ -164,10 +180,10 @@ public class CircuitPuzzle : MonoBehaviour
 
                 switch ((CircuitDirection)d)
                 {
-                    case CircuitDirection.Up:    newRow--; break;
+                    case CircuitDirection.Up: newRow--; break;
                     case CircuitDirection.Right: newCol++; break;
-                    case CircuitDirection.Down:  newRow++; break;
-                    case CircuitDirection.Left:  newCol--; break;
+                    case CircuitDirection.Down: newRow++; break;
+                    case CircuitDirection.Left: newCol--; break;
                 }
 
                 if (newRow < 0 || newRow >= rows ||

@@ -20,7 +20,6 @@ public class CircuitTile : MonoBehaviour
     public Image image;
     public TileType type;
 
-    // Tem de ser múltiplo de 90 (0, 90, 180, 270)
     public int rotation;
 
     public Color poweredColor = new Color(0.2f, 1f, 0.4f);
@@ -31,8 +30,19 @@ public class CircuitTile : MonoBehaviour
     private CircuitPuzzle puzzle;
     private Outline glow;
 
+    private int initialRotation;
+    private bool initialSaved;
+
     private void Awake()
     {
+        // Guarda a rotacao inicial UMA so vez (nunca e sobrescrita).
+        if (!initialSaved)
+        {
+            rotation = NormalizeRotation(rotation);
+            initialRotation = rotation;
+            initialSaved = true;
+        }
+
         if (image == null)
             image = GetComponent<Image>();
 
@@ -51,13 +61,13 @@ public class CircuitTile : MonoBehaviour
 
     public void SetPuzzle(CircuitPuzzle circuitPuzzle)
     {
- 
         puzzle = circuitPuzzle;
+
+        // Ja nao mexe no initialRotation.
         rotation = NormalizeRotation(rotation);
         UpdateRotation();
     }
 
-    // Ligar a um Button: OnClick -> CircuitTile.Rotate
     public void Rotate()
     {
         if (puzzle != null && puzzle.IsSolved)
@@ -83,35 +93,29 @@ public class CircuitTile : MonoBehaviour
         }
     }
 
-    // Índices: 0 = Cima, 1 = Direita, 2 = Baixo, 3 = Esquerda
-    // Base da reta: horizontal (Direita + Esquerda)
-    // Base da curva: ┌ (Direita + Baixo)
-    // O CircuitPuzzle tem "Straight/Corner Sprite Rotation" para acertar com o sprite.
-    // Sprite novo da curva com rotation = 0: ┐ (Esquerda + Baixo) = 90 sobre a base ┌.
     public bool[] GetConnections()
     {
+        // Indices: 0 = Cima, 1 = Direita, 2 = Baixo, 3 = Esquerda
         bool[] connections = new bool[4];
-        int baseRotation = 0;
 
+        // Orientacao base (rotation = 0):
+        //   Reta  -> Esquerda + Direita
+        //   Curva -> Esquerda + Baixo
         if (type == TileType.Straight)
         {
-            connections[1] = true;
             connections[3] = true;
-
-            if (puzzle != null)
-                baseRotation = puzzle.straightSpriteRotation;
+            connections[1] = true;
         }
         else
         {
-            connections[1] = true;
+            connections[3] = true;
             connections[2] = true;
-
-            // Sem puzzle ligado, assume o sprite novo: ┐ (Esquerda + Baixo)
-            baseRotation = puzzle != null ? puzzle.cornerSpriteRotation : 90;
         }
 
         bool[] rotated = new bool[4];
-        int turns = ((NormalizeRotation(baseRotation) + NormalizeRotation(rotation)) / 90) % 4;
+
+        // Rotation em sentido horario, igual ao visual (Euler 0,0,-rotation).
+        int turns = (NormalizeRotation(rotation) / 90) % 4;
 
         for (int i = 0; i < 4; i++)
         {
@@ -131,5 +135,13 @@ public class CircuitTile : MonoBehaviour
 
         if (glow != null)
             glow.enabled = powered;
+    }
+
+    public void ResetTile()
+    {
+        rotation = initialRotation;
+
+        UpdateRotation();
+        SetPowered(false);
     }
 }
