@@ -1396,6 +1396,7 @@ MonoBehaviour:
   knifeCooldown: 10
   knifeAimDistance: 100
   knifeCount: 3
+  longRangeAttackText: {fileID: 298637507}
   collectabelsOwend: 0
   collectabelsNeeded: 0
   knifeUnlocked: 1

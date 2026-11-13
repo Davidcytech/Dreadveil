@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using Invector.vCharacterController;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -46,6 +47,11 @@ public class Player : MonoBehaviour
     public int knifeCount = 3;
 
     private float knifeTimer;
+    public GameObject longRangeAttackText;
+    [TextArea] public string longRangeAttackMessage = "Ataque de longo alcance desbloqueado! Prima R para utilizar";
+    [Tooltip("Segundos entre cada letra")]
+    public float typingSpeed = 0.05f;
+    private Coroutine typingCoroutine;
 
     // Cópias da faca já criadas (desligadas) à espera de serem lançadas.
     private readonly List<GameObject> knifeStock = new List<GameObject>();
@@ -85,6 +91,8 @@ public class Player : MonoBehaviour
             footstepsAudio.loop = false;
             footstepsAudio.Stop();
         }
+
+        SetLongRangeText(knifeUnlocked);
     }
 
     private void Update()
@@ -488,15 +496,72 @@ public class Player : MonoBehaviour
         hasShieldPowerup = true;
     }
 
+    // Mostra/esconde o objeto. Ao mostrar, escreve a mensagem letra a letra.
+    private void SetLongRangeText(bool visible)
+    {
+        if (longRangeAttackText == null)
+            return;
+
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
+
+        if (!visible)
+        {
+            longRangeAttackText.SetActive(false);
+            return;
+        }
+
+        // Procura o componente de texto no próprio objeto ou nos filhos (mesmo desligados)
+        TMP_Text label = longRangeAttackText.GetComponentInChildren<TMP_Text>(true);
+
+        if (label == null)
+        {
+            longRangeAttackText.SetActive(true);
+            return;
+        }
+
+        // Começa sem nenhuma letra visível, para não "piscar" a mensagem toda.
+        label.text = longRangeAttackMessage;
+        label.maxVisibleCharacters = 0;
+
+        longRangeAttackText.SetActive(true);
+
+        typingCoroutine = StartCoroutine(TypeText(label));
+    }
+
+    private IEnumerator TypeText(TMP_Text label)
+    {
+        // Garante que o TMP calcula o número de caracteres.
+        label.ForceMeshUpdate();
+        int total = label.textInfo.characterCount;
+
+        for (int i = 1; i <= total; i++)
+        {
+            label.maxVisibleCharacters = i;
+
+            // Realtime: continua a escrever mesmo com o jogo em pausa.
+            yield return new WaitForSecondsRealtime(typingSpeed);
+        }
+
+        label.maxVisibleCharacters = int.MaxValue;
+        typingCoroutine = null;
+    }
+
     // IMPLEMENTEI A COISA DE APANHAR COLETAVEIS
     public void AddCollecatbel()
     {
         collectabelsOwend++;
+
         if (collectabelsOwend >= collectabelsNeeded && !knifeUnlocked)
         {
             knifeUnlocked = true;
-            Debug.Log("Faca Desbloqueada!");
 
+            SetLongRangeText(true);
+
+            Debug.Log("Faca Desbloqueada!");
         }
     }
 
