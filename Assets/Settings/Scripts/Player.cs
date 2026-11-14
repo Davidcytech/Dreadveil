@@ -532,23 +532,29 @@ public class Player : MonoBehaviour
         typingCoroutine = StartCoroutine(TypeText(label));
     }
 
+
     private IEnumerator TypeText(TMP_Text label)
     {
-        // Garante que o TMP calcula o número de caracteres.
         label.ForceMeshUpdate();
         int total = label.textInfo.characterCount;
 
         for (int i = 1; i <= total; i++)
         {
             label.maxVisibleCharacters = i;
-
-            // Realtime: continua a escrever mesmo com o jogo em pausa.
             yield return new WaitForSecondsRealtime(typingSpeed);
         }
 
         label.maxVisibleCharacters = int.MaxValue;
+
+        // Aguarda 4 segundos depois de terminar de escrever.
+        yield return new WaitForSecondsRealtime(4f);
+
+        // Esconde a mensagem.
+        longRangeAttackText.SetActive(false);
+
         typingCoroutine = null;
     }
+
 
     // IMPLEMENTEI A COISA DE APANHAR COLETAVEIS
     public void AddCollecatbel()
