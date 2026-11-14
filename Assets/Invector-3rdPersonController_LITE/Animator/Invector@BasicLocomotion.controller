@@ -1,5 +1,27 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1101 &-8385162560190967272
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions: []
+  m_DstStateMachine: {fileID: 1107472557863459370}
+  m_DstState: {fileID: 0}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.4055053
+  m_TransitionOffset: 0.11662899
+  m_ExitTime: 0.9409409
+  m_HasExitTime: 1
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
 --- !u!1101 &-6262661003924926136
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -12504,6 +12526,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: 2608290067542411685}
     m_Position: {x: 410, y: 480, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 8253229863640984752}
+    m_Position: {x: -10, y: 290, z: 0}
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 1107986396892164804}
@@ -12515,12 +12540,12 @@ AnimatorStateMachine:
   - {fileID: 1101826494369673154}
   m_EntryTransitions: []
   m_StateMachineTransitions:
+  - first: {fileID: 1107472557863459370}
+    second: []
   - first: {fileID: 1107957787379878506}
     second:
     - {fileID: 6582854192746328954}
     - {fileID: -4634666884834901910}
-  - first: {fileID: 1107472557863459370}
-    second: []
   m_StateMachineBehaviours: []
   m_AnyStatePosition: {x: -48, y: 360, z: 0}
   m_EntryPosition: {x: -48, y: 408, z: 0}
@@ -19619,3 +19644,30 @@ AnimatorTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 1
+--- !u!1102 &8253229863640984752
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BossTakedown
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions:
+  - {fileID: -8385162560190967272}
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: -623603649343465320, guid: 0da05c1ec36f8bf4baa204b844fdb695, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 

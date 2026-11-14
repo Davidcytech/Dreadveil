@@ -35,7 +35,13 @@ public class StealthKillController : MonoBehaviour
     [Header("Enemy Detection")]
     [SerializeField] private LayerMask enemyLayer;
 
+    [Header("Boss Takedown")]
+    [SerializeField] private string bossPlayerStateName = "BossTakedown";
+    [SerializeField] private float bossBackDistance = 1.2f;   // distância atrás do boss
+    [SerializeField] private float bossReactDelay = 1.0f;     // quando o boss reage (sincroniza com o golpe)
+
     private bool isDoingTakedown = false;
+    
 
     private MonoBehaviour invectorInput;
     private MonoBehaviour invectorController;
@@ -103,6 +109,14 @@ public class StealthKillController : MonoBehaviour
 
         if (closestEnemy == null || closestDistance > takedownRange)
             return;
+
+        Boss boss = closestEnemy.GetComponent<Boss>();
+        if (boss != null)
+        {
+            if (boss.CanBeStabbed(transform))
+                StartCoroutine(PerformBossTakedown(boss));
+            return;
+        }
 
         StealthKillTarget target = closestEnemy.GetComponent<StealthKillTarget>();
 
@@ -178,6 +192,42 @@ public class StealthKillController : MonoBehaviour
         yield return new WaitForSeconds(delayBetweenKicks);
         audioSource.PlayOneShot(kickSound, kickVolume);
         if (makesNoise) AlertNearbyEnemies(victim);
+    }
+
+    private IEnumerator PerformBossTakedown(Boss boss)
+    {
+        isDoingTakedown = true;
+
+        boss.StartStealthHit(bossReactDelay);
+
+        if (invectorInput != null) invectorInput.enabled = false;
+        if (invectorController != null) invectorController.enabled = false;
+        if (characterController != null) characterController.enabled = false;
+
+        // posiciona o player atrás do boss, virado para as costas dele
+        Vector3 pos = boss.transform.position - boss.transform.forward * bossBackDistance;
+        pos.y = transform.position.y;
+        transform.SetPositionAndRotation(pos, Quaternion.LookRotation(boss.transform.forward));
+
+        playerAnimator.Play(bossPlayerStateName, 0, 0f);
+
+        // espera que a animação acabe sozinha
+        float timeout = 1f;
+        while (!playerAnimator.GetCurrentAnimatorStateInfo(0).IsName(bossPlayerStateName) && timeout > 0f)
+        {
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+
+        while (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName(bossPlayerStateName) &&
+            playerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.95f)
+            yield return null;
+
+        if (invectorInput != null) invectorInput.enabled = true;
+        if (invectorController != null) invectorController.enabled = true;
+        if (characterController != null) characterController.enabled = true;
+
+        isDoingTakedown = false;
     }
 
     private void AlertNearbyEnemies(StealthKillTarget victim)

@@ -36,6 +36,10 @@ public class Boss : MonoBehaviour
     public int backstabsTaken;
 
     public bool playerInSightRange;
+    public float blindTime = 5f;               // tempo em que não vê o player depois do ataque
+    private bool reacting;
+    public string deathStateName = "";  
+    private float blindTimer;
 
     private Vector3 center;
     private Vector3 currentTarget;
@@ -84,7 +88,10 @@ public class Boss : MonoBehaviour
         if (state == State.Dead || player == null || agent == null)
             return;
 
-        playerInSightRange = CanSeePlayer();
+        if (blindTimer > 0f)
+        blindTimer -= Time.deltaTime;
+
+        playerInSightRange = blindTimer <= 0f && CanSeePlayer();
 
         if (playerInSightRange)
         {
@@ -314,37 +321,99 @@ public class Boss : MonoBehaviour
     }
 
     // ---------------- BACKSTAB / MORTE ----------------
-    public bool TakeBackstab(Transform attacker)
+        public bool CanBeStabbed(Transform attacker)
     {
-        if (state == State.Dead || Time.time < nextBackstabTime)
+        if (state == State.Dead || state == State.Attacking || reacting)
             return false;
 
         Vector3 toAttacker = attacker.position - transform.position;
         toAttacker.y = 0f;
 
-        if (Vector3.Angle(-transform.forward, toAttacker) > backstabAngle)
-            return false;
-
-        RegisterBackstab();
-        return true;
+        return Vector3.Angle(-transform.forward, toAttacker) <= backstabAngle;
     }
 
-    private void RegisterBackstab()
+    // Chamado pelo player no início do takedown
+    public void StartStealthHit(float reactDelay)
     {
-        backstabsTaken++;
-        nextBackstabTime = Time.time + backstabCooldown;
-
-        Debug.Log("Boss: ataque pelas costas " + backstabsTaken + "/" + backstabsToKill);
-
-        if (backstabsTaken >= backstabsToKill)
-            Die();
+        StartCoroutine(StealthHitRoutine(reactDelay));
     }
 
-    [ContextMenu("Test Backstab")]
-    private void TestBackstab()
+    private IEnumerator StealthHitRoutine(float reactDelay)
+    {
+        reacting = true;
+        backstabsTaken++;
+        Debug.Log("Boss: golpe furtivo " + backstabsTaken + "/" + backstabsToKill);
+
+        // pára logo, para o player conseguir posicionar-se
+        state = State.Attacking;
+        moveDuringAttack = false;
+        running = false;
+        agent.isStopped = true;
+        agent.ResetPath();
+
+        yield return new WaitForSeconds(reactDelay);
+
+        // 3.º golpe: morre
+        if (backstabsTaken >= backstabsToKill)
+        {
+            Die();
+
+            if (anim != null && !string.IsNullOrEmpty(deathStateName))
+                anim.Play(deathStateName, 0, 0f);
+
+            yield break;
+        }
+
+        // reação: BossTaker -> Roar (a transição já existe no Animator)
+        if (anim != null)
+        {
+            anim.Play("BossTaker", 0, 0f);
+            yield return StartCoroutine(WaitForStateEnd("BossTaker"));
+            yield return StartCoroutine(WaitForStateEnd("Roar"));
+        }
+
+        if (state == State.Dead) yield break;
+
+        // durante o ataque ele sabe onde o player está
+        lastSeenPosition = player.position;
+        yield return StartCoroutine(attacks.SpikeAttack());
+
+        if (state == State.Dead) yield break;
+
+        // depois do ataque: esquece o player
+        lostSightTimer = 0f;
+        lastSeenPosition = transform.position;
+        blindTimer = blindTime;
+        hasTarget = false;
+        waiting = false;
+
+        chaseDuringCooldown = false;       // fica parado a "procurar"
+        agent.isStopped = true;
+        state = State.Cooldown;
+        cooldownTimer = attackCooldown;
+        reacting = false;
+    }
+
+    private IEnumerator WaitForStateEnd(string stateName)
+    {
+        float timeout = 2f;
+
+        while (!anim.GetCurrentAnimatorStateInfo(0).IsName(stateName) && timeout > 0f)
+        {
+            timeout -= Time.deltaTime;
+            yield return null;
+        }
+
+        while (anim.GetCurrentAnimatorStateInfo(0).IsName(stateName) &&
+            anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.95f)
+            yield return null;
+    }
+
+    [ContextMenu("Test Stealth Hit")]
+    private void TestStealthHit()
     {
         if (Application.isPlaying)
-            RegisterBackstab();
+            StartStealthHit(0f);
     }
 
     private void Die()
