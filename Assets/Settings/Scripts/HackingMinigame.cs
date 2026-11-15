@@ -17,10 +17,10 @@ public class HackingMinigame : MonoBehaviour
     public bool restartAllOnFail = false;        // restart, é opcial, podemos desativar
 
     //cores
-    public Color normalColor = Color.white;
-    public Color correctColor = Color.green;
-    public Color errorColor = Color.red;
-    public Color pendingColor = Color.gray;
+    public Color normalColor = new Color32(0, 229, 255, 255);     // Ciano brilhante para as letras a rodar
+    public Color correctColor = new Color32(0, 255, 102, 255);    // Verde-fósforo néon intenso
+    public Color errorColor = new Color32(255, 51, 85, 255);      // Vermelho erro cyberpunk
+    public Color pendingColor = new Color32(70, 80, 100, 255);
     public bool pauseGame = false;               // true = Time.timeScale = 0
     public UnityEvent onWin;                
 
@@ -31,6 +31,9 @@ public class HackingMinigame : MonoBehaviour
     private bool windowOpen;                    
     private bool waitingForError;
     private Coroutine spinRoutine;
+
+    public CanvasGroup canvasGroup; 
+    public float fadeDuration = 0.5f;
 
     private void Awake()
     {
@@ -51,6 +54,7 @@ public class HackingMinigame : MonoBehaviour
 
         currentSlot = 0;
         ResetSlots();
+        StartCoroutine(FadeIn());
         spinRoutine = StartCoroutine(SpinSlot());
     }
 
@@ -62,6 +66,35 @@ public class HackingMinigame : MonoBehaviour
             TryLockLetter();
         }
     }
+    private IEnumerator FadeIn()
+{
+    float timer = 0f;
+    canvasGroup.alpha = 0f;
+
+    while (timer < fadeDuration)
+    {
+        timer += Time.unscaledDeltaTime; // Usa unscaled se o jogo estiver pausado
+        canvasGroup.alpha = Mathf.Clamp01(timer / fadeDuration);
+        yield return null;
+    }
+    canvasGroup.alpha = 1f;
+}
+
+// Corrotina de Fade Out (desaparecer suavemente antes de fechar)
+private IEnumerator FadeOutAndClose()
+{
+    float timer = 0f;
+    while (timer < fadeDuration)
+    {
+        timer += Time.unscaledDeltaTime;
+        canvasGroup.alpha = 1f - Mathf.Clamp01(timer / fadeDuration);
+        yield return null;
+    }
+    canvasGroup.alpha = 0f;
+
+    // Executa o fecho real depois do fade acabar
+    CloseDirect();
+}
 
     private void ResetSlots()
     {
@@ -173,6 +206,16 @@ public class HackingMinigame : MonoBehaviour
 
         if (spinRoutine != null) StopCoroutine(spinRoutine);
 
+        panel.SetActive(false);
+
+        if (pauseGame) Time.timeScale = 1f;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+    
+    private void CloseDirect()
+    {
         panel.SetActive(false);
 
         if (pauseGame) Time.timeScale = 1f;

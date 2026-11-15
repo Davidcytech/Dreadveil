@@ -1115,6 +1115,7 @@ GameObject:
   - component: {fileID: 91316408}
   - component: {fileID: 91316410}
   - component: {fileID: 91316409}
+  - component: {fileID: 91316411}
   m_Layer: 5
   m_Name: HackMinigame
   m_TagString: Untagged
@@ -1134,12 +1135,14 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 120599015}
   - {fileID: 686661664}
   - {fileID: 922985348}
   - {fileID: 1335609377}
   - {fileID: 374832322}
   - {fileID: 307340313}
   - {fileID: 1291223747}
+  - {fileID: 1110309590}
   m_Father: {fileID: 168429362}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1160,7 +1163,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1185,6 +1188,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 91316407}
   m_CullTransparentMesh: 1
+--- !u!225 &91316411
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91316407}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &96333305
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1547,6 +1562,78 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.78916, y: 7.503408, z: 1.532932}
   m_Center: {x: 0, y: 0.12630796, z: 0}
+--- !u!1 &120599014
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 120599015}
+  - component: {fileID: 120599017}
+  - component: {fileID: 120599016}
+  m_Layer: 5
+  m_Name: RawImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &120599015
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120599014}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 19.315, y: 19.315, z: 19.315}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 91316408}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &120599016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120599014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 8400000, guid: c307b708763a71f49a70a672466ecf60, type: 2}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &120599017
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120599014}
+  m_CullTransparentMesh: 1
 --- !u!1001 &125053156
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2642,6 +2729,9 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+  bossPlayerStateName: BossTakedown
+  bossBackDistance: 1.2
+  bossReactDelay: 1
 --- !u!114 &163998213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2673,9 +2763,13 @@ MonoBehaviour:
   knifeCooldown: 2
   knifeAimDistance: 100
   knifeCount: 3
+  longRangeAttackText: {fileID: 0}
+  longRangeAttackMessage: Ataque de longo alcance desbloqueado! Prima R para utilizar
+  typingSpeed: 0.05
   collectabelsOwend: 0
   collectabelsNeeded: 5
   knifeUnlocked: 0
+  minigamesCompletos: 0
   hasdynamite: 0
 --- !u!114 &163998214
 MonoBehaviour:
@@ -2947,6 +3041,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  canvasGroup: {fileID: 91316411}
+  fadeDuration: 0.5
 --- !u!1 &175419042
 GameObject:
   m_ObjectHideFlags: 0
@@ -4069,7 +4165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -4247,11 +4343,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 307071660}
   knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
 --- !u!114 &236901495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5039,8 +5130,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: N
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
+  m_sharedMaterial: {fileID: -7343524806468234508, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5951,8 +6042,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: N
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
+  m_sharedMaterial: {fileID: -7343524806468234508, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -6371,11 +6462,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1264321616}
   knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
 --- !u!1 &394743282
 GameObject:
   m_ObjectHideFlags: 0
@@ -9983,8 +10069,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: N
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
+  m_sharedMaterial: {fileID: -7343524806468234508, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11407,7 +11493,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -11585,11 +11671,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1704537446}
   knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
 --- !u!114 &797643164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14958,8 +15039,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: N
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
+  m_sharedMaterial: {fileID: -7343524806468234508, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -15356,7 +15437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -15534,11 +15615,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 49445218}
   knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
 --- !u!114 &938012546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19634,6 +19710,78 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1099563911}
   m_Mesh: {fileID: -8143615732836099353, guid: 4da24b97ce0dc4f4f91329e95d074c74, type: 3}
+--- !u!1 &1110309589
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1110309590}
+  - component: {fileID: 1110309591}
+  m_Layer: 5
+  m_Name: Video Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1110309590
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110309589}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 91316408}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!328 &1110309591
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110309589}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: cecb2b99ade5f6741a140d108b09b624, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: c307b708763a71f49a70a672466ecf60, type: 2}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 2
+  m_AspectRatio: 2
+  m_DataSource: 0
+  m_TimeUpdateMode: 2
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 2
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01o
+  m_DirectAudioMutes: 01o
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 1
+  m_SkipOnDrop: 1
+  m_Looping: 1
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
 --- !u!1 &1112098146
 GameObject:
   m_ObjectHideFlags: 0
@@ -21959,8 +22107,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: N
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
+  m_sharedMaterial: {fileID: -7343524806468234508, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -22267,7 +22415,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -22971,8 +23119,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: N
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
+  m_sharedMaterial: {fileID: -7343524806468234508, guid: c75d98a061f29584d9a314d7a7847cd1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -24167,7 +24315,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -25025,11 +25173,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1225010175}
   knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
 --- !u!114 &1341755013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27715,7 +27858,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -27893,11 +28036,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1922170182}
   knifeDeathStateName: BrutalTaker
-  knifeAnimationDuration: 2.5
-  lyingStateName: 
-  lyingStateDuration: 1.5
-  faceKnifeDirection: 1
-  killSound: {fileID: 0}
 --- !u!114 &1473810305
 MonoBehaviour:
   m_ObjectHideFlags: 0
