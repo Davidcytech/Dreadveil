@@ -38,7 +38,9 @@ public class StealthKillController : MonoBehaviour
     [Header("Boss Takedown")]
     [SerializeField] private string bossPlayerStateName = "BossTakedown";
     [SerializeField] private float bossBackDistance = 1.2f;   // distância atrás do boss
-    [SerializeField] private float bossReactDelay = 1.0f;     // quando o boss reage (sincroniza com o golpe)
+    [SerializeField] private float bossReactDelay = 0.0f;
+    [SerializeField] private float bossMoveStartDelay = 0.5f;   // quando começa a mover-se
+    [SerializeField] private float bossMoveDuration = 1.5f;     // quanto tempo demora a chegar
 
     private bool isDoingTakedown = false;
     
@@ -113,8 +115,11 @@ public class StealthKillController : MonoBehaviour
         Boss boss = closestEnemy.GetComponent<Boss>();
         if (boss != null)
         {
-            if (boss.CanBeStabbed(transform))
-                StartCoroutine(PerformBossTakedown(boss));
+            StealthKillTarget bossTarget = closestEnemy.GetComponent<StealthKillTarget>();
+
+            if (bossTarget != null && bossTarget.TakedownPoint != null && boss.CanBeStabbed(transform))
+                StartCoroutine(PerformBossTakedown(boss, bossTarget.TakedownPoint, bossTarget.TakedownEndPoint));
+
             return;
         }
 
@@ -194,7 +199,7 @@ public class StealthKillController : MonoBehaviour
         if (makesNoise) AlertNearbyEnemies(victim);
     }
 
-    private IEnumerator PerformBossTakedown(Boss boss)
+    private IEnumerator PerformBossTakedown(Boss boss, Transform point, Transform endPoint)
     {
         isDoingTakedown = true;
 
@@ -204,24 +209,48 @@ public class StealthKillController : MonoBehaviour
         if (invectorController != null) invectorController.enabled = false;
         if (characterController != null) characterController.enabled = false;
 
-        // posiciona o player atrás do boss, virado para as costas dele
-        Vector3 pos = boss.transform.position - boss.transform.forward * bossBackDistance;
-        pos.y = transform.position.y;
-        transform.SetPositionAndRotation(pos, Quaternion.LookRotation(boss.transform.forward));
-
+        transform.SetPositionAndRotation(point.position, point.rotation);
         playerAnimator.Play(bossPlayerStateName, 0, 0f);
 
-        // espera que a animação acabe sozinha
+        // desliga o root motion para o código controlar a posição
+        bool oldRootMotion = playerAnimator.applyRootMotion;
+        playerAnimator.applyRootMotion = false;
+
+        Vector3 startPos = point.position;
+        Quaternion startRot = point.rotation;
+        float elapsed = 0f;
+
+        // espera que o Animator entre no estado
         float timeout = 1f;
         while (!playerAnimator.GetCurrentAnimatorStateInfo(0).IsName(bossPlayerStateName) && timeout > 0f)
         {
             timeout -= Time.deltaTime;
+            elapsed += Time.deltaTime;
             yield return null;
         }
 
+        // enquanto a animação decorre, desliza do início ao fim
         while (playerAnimator.GetCurrentAnimatorStateInfo(0).IsName(bossPlayerStateName) &&
             playerAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.95f)
+        {
+            if (endPoint != null)
+            {
+                float t = Mathf.InverseLerp(bossMoveStartDelay, bossMoveStartDelay + bossMoveDuration, elapsed);
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                transform.position = Vector3.Lerp(startPos, endPoint.position, t);
+                transform.rotation = Quaternion.Slerp(startRot, endPoint.rotation, t);
+            }
+
+            elapsed += Time.deltaTime;
             yield return null;
+        }
+
+        // garante a posição final exata
+        if (endPoint != null)
+            transform.SetPositionAndRotation(endPoint.position, endPoint.rotation);
+
+        playerAnimator.applyRootMotion = oldRootMotion;
 
         if (invectorInput != null) invectorInput.enabled = true;
         if (invectorController != null) invectorController.enabled = true;

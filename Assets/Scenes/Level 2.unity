@@ -875,6 +875,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1414515009}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &15620397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1396,7 +1397,9 @@ MonoBehaviour:
     m_Bits: 128
   bossPlayerStateName: BossTakedown
   bossBackDistance: 1.2
-  bossReactDelay: 1
+  bossReactDelay: 0
+  bossMoveStartDelay: 0
+  bossMoveDuration: 1.2
 --- !u!114 &23863406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1548,10 +1551,10 @@ MonoBehaviour:
   knifeCount: 3
   longRangeAttackText: {fileID: 298637507}
   longRangeAttackMessage: Ataque de longo alcance desbloqueado! Prima R para utilizar
-  typingSpeed: 0.05
+  typingSpeed: 0.1
   collectabelsOwend: 0
   collectabelsNeeded: 0
-  knifeUnlocked: 1
+  knifeUnlocked: 0
   minigamesCompletos: 0
   hasdynamite: 0
 --- !u!82 &23863409
@@ -5464,6 +5467,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 2029386906}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &129684175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14550,6 +14554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1264321616}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &394389623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20840,6 +20845,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1360249248}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &631731792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22046,6 +22052,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1651710980}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &663537713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23436,6 +23443,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 115792280}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &710278914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31241,6 +31249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 663024572}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &980124817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37178,6 +37187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1582833675}
   knifeDeathStateName: RangeTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &1207466681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38589,6 +38599,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1243532566}
   m_CullTransparentMesh: 1
+--- !u!1 &1258753795
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1258753796}
+  m_Layer: 7
+  m_Name: TakedownEndPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1258753796
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1258753795}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.89}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1544194478}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1263429990
 GameObject:
   m_ObjectHideFlags: 0
@@ -45797,7 +45838,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.9
+      value: 8.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -45805,7 +45846,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 18.8
+      value: 10.88
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -45937,7 +45978,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       propertyPath: m_Layer
@@ -46009,7 +46050,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1603229336}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1258753796}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       insertIndex: -1
@@ -46023,7 +46070,30 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 381551521}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1544194479}
   m_SourcePrefab: {fileID: 100100000, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+--- !u!4 &1544194478 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 821cc4fd7f76b3748b9c271409402f5c, type: 3}
+  m_PrefabInstance: {fileID: 1544194477}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1544194479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 381551514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2958e831e449b1c4e9a6d3d8462dbb9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
+  takedownPoint: {fileID: 1603229336}
+  knifeDeathStateName: 
+  takedownEndPoint: {fileID: 1258753796}
 --- !u!1 &1544556868 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fd8676d76b056e14fb1782e2ab9086a1, type: 3}
@@ -47127,6 +47197,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6.1986237, y: 2.7996087, z: 2.5567544}
   m_Center: {x: 0, y: 1.3998044, z: 0}
+--- !u!1 &1603229335
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1603229336}
+  m_Layer: 7
+  m_Name: TakedownPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1603229336
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603229335}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1.178}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1544194478}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1604679130
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,8 @@ public class StealthKillTarget : MonoBehaviour
     [Header("Knife Kill (longo alcance)")]
     [Tooltip("Estado do Animator do inimigo a tocar")]
     [SerializeField] private string knifeDeathStateName = "RangeTaker";
+    [SerializeField] private Transform takedownEndPoint;
+    public Transform TakedownEndPoint => takedownEndPoint;
 
     private bool isKilled = false;
 

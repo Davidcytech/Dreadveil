@@ -322,15 +322,9 @@ public class Boss : MonoBehaviour
 
     // ---------------- BACKSTAB / MORTE ----------------
         public bool CanBeStabbed(Transform attacker)
-    {
-        if (state == State.Dead || state == State.Attacking || reacting)
-            return false;
-
-        Vector3 toAttacker = attacker.position - transform.position;
-        toAttacker.y = 0f;
-
-        return Vector3.Angle(-transform.forward, toAttacker) <= backstabAngle;
-    }
+        {
+            return state != State.Dead && state != State.Attacking && !reacting;
+        }
 
     // Chamado pelo player no início do takedown
     public void StartStealthHit(float reactDelay)
