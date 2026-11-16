@@ -27,6 +27,20 @@ public class Boss : MonoBehaviour
     public float angle = 130f;
     public float crouchSight = 0.5f;
     public LayerMask visionMask;
+    public float eyeHeight = 1.5f;                 
+    private Collider playerCollider;               
+
+    // Obstáculos na ronda 
+    public LayerMask obstacleMask;                 // escolhe só a layer "Obstaculo"
+    public float obstacleCheckDistance = 1.5f;     // distância à frente a verificar
+    public float obstacleCheckRadius = 0.5f;       // espessura da verificação
+    public float blockedTime = 0.4f;               // tempo parado com obstáculo à frente até desistir do ponto
+    public float stuckTime = 1.5f;                 // tempo parado sem razão aparente até desistir
+    public float maxTimePerPoint = 15f;            // limite de tempo para chegar a cada ponto
+    public float minPointDistance = 3f;            // não escolhe pontos colados a ele
+    private float stuckTimer;
+    private float pointTimer;
+    private NavMeshPath pathCheck;
 
     // Ataques
     public float attackCooldown = 3f;
@@ -38,7 +52,7 @@ public class Boss : MonoBehaviour
     public bool playerInSightRange;
     public float blindTime = 5f;               // tempo em que não vê o player depois do ataque
     private bool reacting;
-    public string deathStateName = "";  
+    public string deathStateName = "";
     private float blindTimer;
 
     private Vector3 center;
@@ -68,6 +82,7 @@ public class Boss : MonoBehaviour
         {
             player = p.transform;
             crouch = p.GetComponent<vCrouchController>();
+            playerCollider = p.GetComponentInChildren<Collider>();   // para uma melhor visao do player
         }
     }
 
@@ -75,6 +90,7 @@ public class Boss : MonoBehaviour
     {
         center = patrolCenter != null ? patrolCenter.position : transform.position;
         lastSeenPosition = transform.position;
+        pathCheck = new NavMeshPath();                                // pathtracking
 
         if (agent != null)
             agent.speed = patrolSpeed;
@@ -142,7 +158,7 @@ public class Boss : MonoBehaviour
         else if (lostSightTimer > 0f)
         {
             lostSightTimer -= Time.deltaTime;
-            ChasePlayer();
+            ChaseLastSeen();                          
         }
         else
         {
@@ -216,6 +232,8 @@ public class Boss : MonoBehaviour
     }
 
     // ---------------- PATRULHA / PERSEGUIÇÃO ----------------
+
+    //agora deteta obstáculos e fica preso
     private void Patroling()
     {
         state = State.Patroling;
@@ -245,13 +263,54 @@ public class Boss : MonoBehaviour
 
             agent.SetDestination(currentTarget);
             hasTarget = true;
+            stuckTimer = 0f;                           // NOVO
+            pointTimer = 0f;                           // NOVO
+            return;                                    // NOVO
         }
 
+        // chegou ao ponto: espera
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.3f)
         {
             waiting = true;
             waitTimer = waitTimeAtPoint;
+            return;
         }
+
+        // verifica se está preso ou a bater num obstaculo
+        if (agent.pathPending)
+            return;
+
+        pointTimer += Time.deltaTime;
+
+        bool slow = agent.velocity.magnitude < 0.2f;
+        stuckTimer = slow ? stuckTimer + Time.deltaTime : 0f;
+
+        float limit = ObstacleAhead() ? blockedTime : stuckTime;
+
+        if (stuckTimer >= limit || pointTimer >= maxTimePerPoint)
+            GiveUpPoint();
+    }
+
+    //desiste deste ponto e escolhe outro
+    private void GiveUpPoint()
+    {
+        hasTarget = false;
+        stuckTimer = 0f;
+        agent.ResetPath();
+    }
+
+    // verifca se ha um obstaculo q o impede de andar
+    private bool ObstacleAhead()
+    {
+        Vector3 dir = agent.desiredVelocity;
+        dir.y = 0f;
+
+        if (dir.sqrMagnitude < 0.01f)
+            dir = transform.forward;
+
+        Vector3 origin = transform.position + Vector3.up * 0.9f;
+
+        return Physics.SphereCast(origin, obstacleCheckRadius, dir.normalized,out RaycastHit hit, obstacleCheckDistance, obstacleMask, QueryTriggerInteraction.Ignore) && !hit.transform.IsChildOf(transform);
     }
 
     private bool PickRandomPoint()
@@ -261,11 +320,19 @@ public class Boss : MonoBehaviour
             Vector2 r = Random.insideUnitCircle * patrolRadius;
             Vector3 candidate = center + new Vector3(r.x, 0f, r.y);
 
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 3f, NavMesh.AllAreas))
-            {
-                currentTarget = hit.position;
-                return true;
-            }
+            if (!NavMesh.SamplePosition(candidate, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+                continue;
+
+            // nap escolhe pontos colados a ele
+            if (Vector3.Distance(transform.position, hit.position) < minPointDistance)
+                continue;
+
+            // apenas aceita se tiver uma caminho completo ate la
+            if (!agent.CalculatePath(hit.position, pathCheck) || pathCheck.status != NavMeshPathStatus.PathComplete)
+                continue;
+
+            currentTarget = hit.position;
+            return true;
         }
 
         return false;
@@ -278,6 +345,16 @@ public class Boss : MonoBehaviour
         agent.isStopped = false;
         agent.speed = chaseSpeed;
         agent.SetDestination(player.position);
+    }
+
+    // vai ao último sítio onde viu o player e nao ate a posição atual do player
+    private void ChaseLastSeen()
+    {
+        state = State.Chase;
+        running = true;
+        agent.isStopped = false;
+        agent.speed = chaseSpeed;
+        agent.SetDestination(lastSeenPosition);
     }
 
     public void SetChasingDuringAttack(bool value)
@@ -321,10 +398,10 @@ public class Boss : MonoBehaviour
     }
 
     // ---------------- BACKSTAB / MORTE ----------------
-        public bool CanBeStabbed(Transform attacker)
-        {
-            return state != State.Dead && state != State.Attacking && !reacting;
-        }
+    public bool CanBeStabbed(Transform attacker)
+    {
+        return state != State.Dead && state != State.Attacking && !reacting;
+    }
 
     // Chamado pelo player no início do takedown
     public void StartStealthHit(float reactDelay)
@@ -438,15 +515,25 @@ public class Boss : MonoBehaviour
         agent.SetDestination(playerInSightRange ? player.position : lastSeenPosition);
     }
 
+    // ---------------- VISÃO ----------------
     private bool CanSeePlayer()
     {
         bool crouching = crouch != null && crouch.isCrouching;
         float range = crouching ? sightRange * crouchSight : sightRange;
 
-        Vector3 origin = transform.position + Vector3.up * 1.5f;
-        Vector3 target = player.position + Vector3.up;
+        Vector3 origin = transform.position + Vector3.up * eyeHeight;
 
-        Vector3 dir = target - origin;
+        Vector3 bodyCenter = playerCollider != null ? playerCollider.bounds.center : player.position + Vector3.up;
+        float top = playerCollider != null ? playerCollider.bounds.extents.y * 0.8f : 0.6f;
+
+        return CanSeePoint(origin, bodyCenter, range) ||
+               CanSeePoint(origin, bodyCenter + Vector3.up * top, range);
+    }
+
+    //verifica distância, ângulo e linha de vista para um ponto
+    private bool CanSeePoint(Vector3 origin, Vector3 point, float range)
+    {
+        Vector3 dir = point - origin;
         float dist = dir.magnitude;
 
         if (dist > range)
@@ -455,8 +542,17 @@ public class Boss : MonoBehaviour
         if (Vector3.Angle(transform.forward, dir) > angle / 2f)
             return false;
 
-        if (Physics.Raycast(origin, dir.normalized, out RaycastHit hit, dist, visionMask))
+        // RaycastAll para ignorar os colliders do próprio boss
+        RaycastHit[] hits = Physics.RaycastAll(origin, dir, dist, visionMask, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.transform.IsChildOf(transform))
+                continue;
+
             return hit.transform == player || hit.transform.IsChildOf(player);
+        }
 
         return false;
     }
