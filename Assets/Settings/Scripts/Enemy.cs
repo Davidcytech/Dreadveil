@@ -93,6 +93,9 @@ Alerta em cadeia
     private float alertTimer;
     private bool alertSent;             // já avisou neste avistamento?
 
+    public float patrolSpeed = 2f;
+    public float chaseSpeed = 5f;
+    public float investigateSpeed = 3f;
     
 
     private void Awake()
@@ -219,6 +222,7 @@ Audição
     // Vai ao local do som, espera searchTime e volta à patrulha
     private void Investigate()
     {
+        agent.speed = investigateSpeed;
         if (reachedSound)
         {
             searchTimer -= Time.deltaTime;
@@ -302,6 +306,8 @@ Patrulha e perseguição
 
     private void Patrolling()
     {
+        agent.speed = patrolSpeed;
+         
         if (patrolPoints.Length == 0)
         {
             return;
@@ -321,6 +327,7 @@ Patrulha e perseguição
 
     private void ChasePlayer()
     {
+        agent.speed = chaseSpeed;
         agent.SetDestination(player.position);
 
     }
@@ -332,7 +339,11 @@ Ataque
     private void AttackPlayer()
     {
         agent.SetDestination(transform.position); //para
+        
+            alertTimer = 0f;
+            alertSent = true;
 
+            AlertNearbyEnemies();
         // olha para o player
         Vector3 direction = player.position - transform.position;
         direction.y = 0f;
@@ -352,7 +363,7 @@ Ataque
             if (rb != null)
             {
                 Vector3 shootDirection = (player.position - bullet.transform.position).normalized;
-                rb.AddForce(transform.forward * 10f, ForceMode.Impulse);
+                rb.AddForce(transform.forward * 13f, ForceMode.Impulse);
             }
 
             alreadyAttacked = true;

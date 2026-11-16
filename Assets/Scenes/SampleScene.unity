@@ -2732,6 +2732,8 @@ MonoBehaviour:
   bossPlayerStateName: BossTakedown
   bossBackDistance: 1.2
   bossReactDelay: 1
+  bossMoveStartDelay: 0.5
+  bossMoveDuration: 1.5
 --- !u!114 &163998213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4165,7 +4167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -4343,6 +4345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 307071660}
   knifeDeathStateName: BrutalTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &236901495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4364,24 +4367,27 @@ MonoBehaviour:
   - {fileID: 1614775371}
   sightRange: 5
   angle: 180
-  crochSight: 0.5
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 1.5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 6
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
-  attackCooldown: 3
+  attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 2
+  alertDelay: 4
   alertRadius: 20
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &236901496
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -6425,24 +6431,27 @@ MonoBehaviour:
   - {fileID: 1888439198}
   sightRange: 5
   angle: 180
-  crochSight: 0.5
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 1.5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 6
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
-  attackCooldown: 3
+  attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 2
+  alertDelay: 4
   alertRadius: 20
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!4 &394389618 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
@@ -6462,6 +6471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1264321616}
   knifeDeathStateName: BrutalTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!1 &394743282
 GameObject:
   m_ObjectHideFlags: 0
@@ -11493,7 +11503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -11671,6 +11681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1704537446}
   knifeDeathStateName: BrutalTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &797643164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11691,24 +11702,27 @@ MonoBehaviour:
   - {fileID: 142316474}
   sightRange: 5
   angle: 180
-  crochSight: 0.5
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 1.5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 6
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
-  attackCooldown: 3
+  attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   inhibitsPlayerEnergy: 1
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 2
+  alertDelay: 4
   alertRadius: 20
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &797643165
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -15437,7 +15451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -15615,6 +15629,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 49445218}
   knifeDeathStateName: BrutalTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &938012546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15636,24 +15651,27 @@ MonoBehaviour:
   - {fileID: 516664122}
   sightRange: 5
   angle: 180
-  crochSight: 0.5
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 1.5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 6
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
-  attackCooldown: 3
+  attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 2
+  alertDelay: 4
   alertRadius: 20
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &938012547
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -22415,7 +22433,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -24315,7 +24333,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -25173,6 +25191,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1225010175}
   knifeDeathStateName: BrutalTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &1341755013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25201,24 +25220,27 @@ MonoBehaviour:
   - {fileID: 1519305790}
   sightRange: 5
   angle: 180
-  crochSight: 0.5
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 1.5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 6
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
-  attackCooldown: 3
+  attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 2
+  alertDelay: 4
   alertRadius: 20
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &1341755014
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -27858,7 +27880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1082271958561512970, guid: 4f01236286a65c94abee2cf80f262555, type: 3}
       propertyPath: m_Layer
@@ -28036,6 +28058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StealthKillTarget
   takedownPoint: {fileID: 1922170182}
   knifeDeathStateName: BrutalTaker
+  takedownEndPoint: {fileID: 0}
 --- !u!114 &1473810305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28055,24 +28078,27 @@ MonoBehaviour:
   - {fileID: 674581113}
   sightRange: 5
   angle: 180
-  crochSight: 0.5
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 1.5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 6
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
-  attackCooldown: 3
+  attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
   inhibitsPlayerEnergy: 1
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 2
+  alertDelay: 4
   alertRadius: 20
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &1473810306
 NavMeshAgent:
   m_ObjectHideFlags: 0
