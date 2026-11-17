@@ -895,16 +895,16 @@ MonoBehaviour:
   - {fileID: 58132429}
   - {fileID: 264429269}
   sightRange: 5
-  angle: 90
-  crochSight: 0.5
+  angle: 180
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 4
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
   attackCooldown: 2
   alreadyAttacked: 0
@@ -912,11 +912,11 @@ MonoBehaviour:
   inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 1.2
+  alertDelay: 4
   alertRadius: 20
-  patrolSpeed: 1
-  chaseSpeed: 5
-  investigateSpeed: 3
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &15620398
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -22089,17 +22089,17 @@ MonoBehaviour:
   - {fileID: 1880061430}
   - {fileID: 1982372856}
   - {fileID: 1880061430}
-  sightRange: 7
-  angle: 90
-  crochSight: 0.5
+  sightRange: 5
+  angle: 180
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 5
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
   attackCooldown: 2
   alreadyAttacked: 0
@@ -22107,11 +22107,11 @@ MonoBehaviour:
   inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 1.2
+  alertDelay: 4
   alertRadius: 20
-  patrolSpeed: 1
-  chaseSpeed: 5
-  investigateSpeed: 3
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &631731793
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -32544,17 +32544,17 @@ MonoBehaviour:
   - {fileID: 513930487}
   - {fileID: 532357055}
   - {fileID: 221896220}
-  sightRange: 7
-  angle: 90
-  crochSight: 0.5
+  sightRange: 5
+  angle: 180
+  crochSight: 0.7
   visionMask:
     serializedVersion: 2
     m_Bits: 8
   playerInSightRange: 0
-  loseSightTime: 5
-  searchTime: 4
-  scaredTime: 2
-  attackRange: 5
+  loseSightTime: 3
+  searchTime: 5
+  scaredTime: 1.4
+  attackRange: 7
   playerInAttackRange: 0
   attackCooldown: 2
   alreadyAttacked: 0
@@ -32562,11 +32562,11 @@ MonoBehaviour:
   inhibitsPlayerEnergy: 1
   inhibitionRadius: 8
   alertsOthers: 1
-  alertDelay: 1.2
+  alertDelay: 4
   alertRadius: 20
-  patrolSpeed: 1
-  chaseSpeed: 5
-  investigateSpeed: 3
+  patrolSpeed: 1.2
+  chaseSpeed: 3
+  investigateSpeed: 2.1
 --- !u!195 &980124818
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -53721,7 +53721,7 @@ Transform:
   m_GameObject: {fileID: 1813433465}
   serializedVersion: 2
   m_LocalRotation: {x: -0.6599894, y: 0.64828956, z: -0.20871985, w: 0.31712902}
-  m_LocalPosition: {x: 30.805, y: -0.607, z: -4.424}
+  m_LocalPosition: {x: 30.874, y: -0.611, z: -4.358}
   m_LocalScale: {x: 0.0322677, y: 1.6934106, z: 0.03226771}
   m_ConstrainProportionsScale: 0
   m_Children: []

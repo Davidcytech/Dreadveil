@@ -2654,7 +2654,7 @@ Transform:
   m_GameObject: {fileID: 163998203}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 32.4, y: 0.058, z: 15.9}
+  m_LocalPosition: {x: -0.1, y: 0.058, z: -17.71}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11715,7 +11715,7 @@ MonoBehaviour:
   attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
-  inhibitsPlayerEnergy: 1
+  inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
   alertDelay: 4
@@ -27837,7 +27837,7 @@ MonoBehaviour:
   attackCooldown: 2
   alreadyAttacked: 0
   projectile: {fileID: 958051384349391153, guid: dbd3bb2654929e543973b4fc97967038, type: 3}
-  inhibitsPlayerEnergy: 1
+  inhibitsPlayerEnergy: 0
   inhibitionRadius: 8
   alertsOthers: 1
   alertDelay: 4
