@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System.Collections;
 
@@ -49,6 +50,7 @@ public class BigDoorManager : MonoBehaviour
     public void AtualizarPortas(int total)
     {
         MinigamesCompletos = total;
+
         Debug.Log("BigDoorManager recebeu: " + MinigamesCompletos + " minigames completos");
 
         VerificarPorta();
@@ -58,7 +60,8 @@ public class BigDoorManager : MonoBehaviour
     {
         foreach (DoorFragment f in fragmentos)
         {
-            if (!f.aberto && f.fragmento != null && MinigamesCompletos >= f.minigamesNecessarios)
+            if (!f.aberto && f.fragmento != null &&
+                MinigamesCompletos >= f.minigamesNecessarios)
             {
                 f.aberto = true;
                 StartCoroutine(AbrirFragmento(f));
@@ -75,10 +78,34 @@ public class BigDoorManager : MonoBehaviour
         while (t < 1f)
         {
             t += Time.deltaTime / Mathf.Max(0.01f, f.duracao);
-            f.fragmento.localPosition = Vector3.Lerp(inicio, fim, Mathf.SmoothStep(0f, 1f, t));
+
+            f.fragmento.localPosition = Vector3.Lerp(
+                inicio,
+                fim,
+                Mathf.SmoothStep(0f, 1f, t)
+            );
+
             yield return null;
         }
 
         f.fragmento.localPosition = fim;
+    }
+
+    // Repõe todos os fragmentos na posição inicial.
+    public void ResetarPortas()
+    {
+        StopAllCoroutines();
+
+        MinigamesCompletos = 0;
+
+        foreach (DoorFragment f in fragmentos)
+        {
+            if (f.fragmento != null)
+                f.fragmento.localPosition = f.posicaoFechada;
+
+            f.aberto = false;
+        }
+
+        Debug.Log("BigDoorManager: portas repostas na posição inicial.");
     }
 }
