@@ -17,6 +17,7 @@ public class PC : MonoBehaviour
 
     private bool hasBaseColor;
     private bool hasEmissionColor;
+    public bool AlreadyHacked => alreadyHacked;
 
     void Start()
     {

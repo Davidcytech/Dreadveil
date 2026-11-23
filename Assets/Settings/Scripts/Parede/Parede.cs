@@ -13,7 +13,8 @@ public class Destroy : MonoBehaviour
 
     public float tempoParaLimpar = 5f;
 
-    private bool jaExplodiu = false;
+    public bool jaExplodiu = false;
+    public float distanciaInteracao = 3f;
 
     // Chamado pelo Player: coloca a dinamite e explode passado o tempo.
     public void ExplodirParede()

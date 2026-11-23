@@ -190,7 +190,7 @@ public class StealthKillController : MonoBehaviour
         if (boss != null)
         {
             if (target.TakedownPoint != null && boss.CanBeStabbed(transform))
-                StartCoroutine(PerformBossTakedown(boss, target.TakedownPoint));
+                StartCoroutine(PerformBossTakedown(boss, target.TakedownPoint, target.TakedownEndPoint));
 
             return;
         }
@@ -282,7 +282,7 @@ public class StealthKillController : MonoBehaviour
 
     // ---------------- TAKEDOWN DO BOSS ----------------
 
-    private IEnumerator PerformBossTakedown(Boss boss, Transform point)
+    private IEnumerator PerformBossTakedown(Boss boss, Transform point, Transform endPoint)
     {
         isDoingTakedown = true;
 
@@ -292,7 +292,6 @@ public class StealthKillController : MonoBehaviour
 
         transform.SetPositionAndRotation(point.position, point.rotation);
 
-        // o clip move o player (root motion do Animator)
         bool oldRootMotion = playerAnimator.applyRootMotion;
         playerAnimator.applyRootMotion = true;
 
@@ -301,6 +300,10 @@ public class StealthKillController : MonoBehaviour
         yield return StartCoroutine(WaitForPlayerStateEnd(bossPlayerStateName));
 
         playerAnimator.applyRootMotion = oldRootMotion;
+
+        // garante o ponto final, aconteça o que acontecer ao root motion
+        if (endPoint != null)
+            transform.SetPositionAndRotation(endPoint.position, endPoint.rotation);
 
         UnlockPlayer();
         isDoingTakedown = false;

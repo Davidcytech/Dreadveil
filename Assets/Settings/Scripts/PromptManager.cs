@@ -9,6 +9,8 @@ public class PromptManager : MonoBehaviour
 
     private object currentOwner;
 
+    public object CurrentOwner => currentOwner;
+
     private void Awake()
     {
         Instance = this;
