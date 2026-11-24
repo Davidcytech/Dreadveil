@@ -3,6 +3,10 @@ using UnityEngine;
 // Interagir com o PC abre o minigame; ao ganhar, fecha passado closeDelay segundos.
 public class LockPC : MonoBehaviour
 {
+    [Header("Checkpoint")]                                   // NOVO
+    public string id = "LockPC_Level1";                      // NOVO: único em cada PC
+    public Checkpoint checkpointAoVencer;                    // NOVO: opcional, checkpoint a ativar ao ganhar
+
     [Header("Jogador")]
     public GameObject player;
     public float interactDistance = 2f;
@@ -67,6 +71,13 @@ public class LockPC : MonoBehaviour
             puzzle.OnSolved += OnPuzzleSolved;
         else
             Debug.LogError(name + ": falta atribuir o CircuitPuzzle!");
+
+        // NOVO: se já foi resolvido antes do último checkpoint, aparece logo como concluído
+        if (CheckpointData.IsDone(id))
+        {
+            IsCompleted = true;
+            SetCompletedVisuals();
+        }
     }
 
     void OnDestroy()
@@ -146,6 +157,29 @@ public class LockPC : MonoBehaviour
 
         IsCompleted = true;
 
+        CheckpointData.MarkDone(id);                          // NOVO: regista que este PC foi resolvido
+
+        SetCompletedVisuals();                                // ALTERADO: o código das cores passou para este método
+
+        Invoke(nameof(CloseMinigame), closeDelay);
+
+        // NOVO: guarda o checkpoint depois de o minigame fechar
+        if (checkpointAoVencer != null)
+            Invoke(nameof(SaveCheckpointAfterWin), closeDelay + 0.1f);
+    }
+
+    // NOVO
+    void SaveCheckpointAfterWin()
+    {
+        Player p = player != null ? player.GetComponentInParent<Player>() : null;
+
+        if (p != null)
+            checkpointAoVencer.Activate(p);
+    }
+
+    // NOVO: luz e material verdes (antes estava dentro do OnPuzzleSolved)
+    void SetCompletedVisuals()
+    {
         if (ThingyLight != null)
             ThingyLight.color = Color.green;
 
@@ -157,8 +191,6 @@ public class LockPC : MonoBehaviour
             if (hasEmissionColor)
                 material.SetColor("_EmissionColor", Color.green);
         }
-
-        Invoke(nameof(CloseMinigame), closeDelay);
     }
 
     void OnApplicationQuit()

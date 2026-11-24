@@ -2944,6 +2944,7 @@ MonoBehaviour:
   minigameText: <color=#FFD54F>F</color>  usar terminal
   dynamiteText: <color=#FFD54F>F</color>  apanhar
   hostageText: "<color=#FFD54F>F</color>  libertar ref\xE9m"
+  wallText: <color=#FFD54F>F</color>  plantar dinamite
 --- !u!1 &168429358
 GameObject:
   m_ObjectHideFlags: 0

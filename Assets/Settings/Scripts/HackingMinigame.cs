@@ -79,23 +79,6 @@ public class HackingMinigame : MonoBehaviour
     }
     canvasGroup.alpha = 1f;
 }
-
-// Corrotina de Fade Out (desaparecer suavemente antes de fechar)
-private IEnumerator FadeOutAndClose()
-{
-    float timer = 0f;
-    while (timer < fadeDuration)
-    {
-        timer += Time.unscaledDeltaTime;
-        canvasGroup.alpha = 1f - Mathf.Clamp01(timer / fadeDuration);
-        yield return null;
-    }
-    canvasGroup.alpha = 0f;
-
-    // Executa o fecho real depois do fade acabar
-    CloseDirect();
-}
-
     private void ResetSlots()
     {
         for (int i = 0; i < slotTexts.Length; i++)
@@ -213,14 +196,5 @@ private IEnumerator FadeOutAndClose()
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    
-    private void CloseDirect()
-    {
-        panel.SetActive(false);
 
-        if (pauseGame) Time.timeScale = 1f;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
 }

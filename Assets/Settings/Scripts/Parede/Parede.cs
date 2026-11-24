@@ -1,9 +1,11 @@
-
 using System.Collections;
 using UnityEngine;
 
 public class Destroy : MonoBehaviour
 {
+    public string id = "Parede_Level2";        // NOVO: único em cada parede
+    public Checkpoint checkpointAoExplodir;
+
     public GameObject objetoDestruidoPrefab;
     public GameObject dinamitePrefab;
 
@@ -16,6 +18,13 @@ public class Destroy : MonoBehaviour
     public bool jaExplodiu = false;
     public float distanciaInteracao = 3f;
 
+    // NOVO: se já explodiu antes do último checkpoint, a parede não existe
+    private void Start()
+    {
+        if (CheckpointData.IsDone(id))
+            Object.Destroy(gameObject);
+    }
+
     // Chamado pelo Player: coloca a dinamite e explode passado o tempo.
     public void ExplodirParede()
     {
@@ -23,6 +32,8 @@ public class Destroy : MonoBehaviour
             return;
 
         jaExplodiu = true;
+
+        CheckpointData.MarkDone(id);           // NOVO: regista que a parede foi explodida
 
         StartCoroutine(ExplodirComDelay());
     }
@@ -40,12 +51,7 @@ public class Destroy : MonoBehaviour
 
             if (col != null)
                 centro = col.bounds.center;
-
-            dinamite = Instantiate(
-                dinamitePrefab,
-                centro + offsetDinamite,
-                transform.rotation
-            );
+                dinamite = Instantiate(dinamitePrefab,centro + offsetDinamite,transform.rotation);
         }
 
         yield return new WaitForSeconds(tempoParaExplodir);
@@ -55,11 +61,7 @@ public class Destroy : MonoBehaviour
 
         if (objetoDestruidoPrefab != null)
         {
-            GameObject partida = Instantiate(
-                objetoDestruidoPrefab,
-                transform.position,
-                transform.rotation
-            );
+            GameObject partida = Instantiate(objetoDestruidoPrefab,transform.position,transform.rotation);
 
             // Apaga os pedaços passado o tempo.
             if (tempoParaLimpar > 0f)
@@ -72,6 +74,13 @@ public class Destroy : MonoBehaviour
             BigDoorManager.Instance.ResetarPortas();
         }
 
+        if (checkpointAoExplodir != null)
+        {
+            Player p = FindFirstObjectByType<Player>();
+
+            if (p != null)
+                checkpointAoExplodir.Activate(p);
+        }
         // Destrói a parede original.
         Destroy(gameObject);
     }
