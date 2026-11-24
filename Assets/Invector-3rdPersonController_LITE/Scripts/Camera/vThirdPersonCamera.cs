@@ -22,6 +22,14 @@ public class vThirdPersonCamera : MonoBehaviour
     public float yMinLimit = -40f;
     public float yMaxLimit = 80f;
 
+    [Header("Troca de ombro")]
+    public KeyCode swapShoulderKey = KeyCode.V;
+    public float shoulderOffset = 0.6f;     // 0.3 a 1.0
+    public float swapShoulderSpeed = 8f;
+    public bool startOnRightShoulder = true;
+
+    private float targetRightOffset;
+
     #endregion
 
     #region hide properties    
@@ -63,6 +71,14 @@ public class vThirdPersonCamera : MonoBehaviour
         Init();
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(swapShoulderKey))
+            targetRightOffset = -targetRightOffset;
+
+        rightOffset = Mathf.Lerp(rightOffset, targetRightOffset, swapShoulderSpeed * Time.deltaTime);
+    }
+
     public void Init()
     {
         if (target == null)
@@ -82,6 +98,9 @@ public class vThirdPersonCamera : MonoBehaviour
 
         distance = defaultDistance;
         currentHeight = height;
+
+        targetRightOffset = startOnRightShoulder ? shoulderOffset : -shoulderOffset;
+        rightOffset = targetRightOffset;
     }
 
     void FixedUpdate()
