@@ -2,10 +2,6 @@ using UnityEngine;
 
 public class MinigamePC2 : MonoBehaviour
 {
-    [Header("Checkpoint")]                                   // NOVO
-    public string id = "MinigamePC2_Level1";                 // NOVO: único em cada PC
-    public Checkpoint checkpointAoVencer;                    // NOVO: opcional, checkpoint a ativar ao ganhar
-
     [Header("Jogador")]
     public GameObject player;
     public float interactDistance = 2f;
@@ -69,13 +65,6 @@ public class MinigamePC2 : MonoBehaviour
             Debug.LogError(name + ": falta atribuir o CircuitPuzzle!");
         else
             puzzle.OnSolved += OnPuzzleSolved;
-
-        // NOVO: se já foi resolvido antes do último checkpoint, aparece logo como concluído
-        if (CheckpointData.IsDone(id))
-        {
-            IsCompleted = true;
-            SetCompletedVisuals();
-        }
     }
 
     void OnDestroy()
@@ -167,8 +156,6 @@ public class MinigamePC2 : MonoBehaviour
         IsCompleted = true;
         Debug.Log(name + ": puzzle resolvido!");
 
-        CheckpointData.MarkDone(id);                          // NOVO: regista que este PC foi resolvido
-
         Player p = player != null ? player.GetComponent<Player>() : null;
 
         if (p != null)
@@ -176,27 +163,6 @@ public class MinigamePC2 : MonoBehaviour
         else
             Debug.LogError(name + ": o objeto Player não tem o script Player!");
 
-        SetCompletedVisuals();                                // ALTERADO: o código das cores passou para este método
-
-        Invoke(nameof(CloseMinigame), closeDelay);
-
-        // NOVO: guarda o checkpoint depois de o minigame fechar
-        if (checkpointAoVencer != null)
-            Invoke(nameof(SaveCheckpointAfterWin), closeDelay + 0.1f);
-    }
-
-    // NOVO
-    void SaveCheckpointAfterWin()
-    {
-        Player p = player != null ? player.GetComponentInParent<Player>() : null;
-
-        if (p != null)
-            checkpointAoVencer.Activate(p);
-    }
-
-    // NOVO: luz e material verdes (antes estava dentro do OnPuzzleSolved)
-    void SetCompletedVisuals()
-    {
         if (ThingyLight != null)
             ThingyLight.color = Color.green;
 
@@ -208,6 +174,8 @@ public class MinigamePC2 : MonoBehaviour
             if (hasEmissionColor)
                 material.SetColor("_EmissionColor", Color.green);
         }
+
+        Invoke(nameof(CloseMinigame), closeDelay);
     }
 
     void OnApplicationQuit()

@@ -93,7 +93,6 @@ public class Player : MonoBehaviour
         }
 
         SetLongRangeText(knifeUnlocked);
-        ApplyCheckpoint();
     }
 
     private void Update()
@@ -472,7 +471,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSecondsRealtime(3f);
 
         Time.timeScale = 1f;
-        CheckpointData.DiscardPending();
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -589,53 +588,4 @@ public class Player : MonoBehaviour
         hasdynamite = true;
         Debug.Log("Dinamite apanhada!");
     }
-
-        // chamado pelo Checkpoint
-    public void SaveCheckpoint(Vector3 pos, Quaternion rot)
-    {
-        CheckpointData.hasCheckpoint = true;
-        CheckpointData.position = pos;
-        CheckpointData.rotation = rot;
-        CheckpointData.health = health;
-        CheckpointData.energy = energy;
-        CheckpointData.energyPowerupTime = timerEpoweup;
-        CheckpointData.shield = hasShieldPowerup;
-        CheckpointData.knifeUnlocked = knifeUnlocked;
-        CheckpointData.hasDynamite = hasdynamite;
-        CheckpointData.collectables = collectabelsOwend;
-        CheckpointData.Commit();
-
-        Debug.Log("Checkpoint guardado");
-    }
-
-    private void ApplyCheckpoint()
-    {
-        if (!CheckpointData.hasCheckpoint) return;
-
-        health = CheckpointData.health;
-        energy = CheckpointData.energy;
-        timerEpoweup = CheckpointData.energyPowerupTime;
-        hasShieldPowerup = CheckpointData.shield;
-        knifeUnlocked = CheckpointData.knifeUnlocked;
-        hasdynamite = CheckpointData.hasDynamite;
-        collectabelsOwend = CheckpointData.collectables;
-
-        transform.SetPositionAndRotation(CheckpointData.position, CheckpointData.rotation);
-
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.position = CheckpointData.position;
-            rb.linearVelocity = Vector3.zero;
-        }
-
-        Physics.SyncTransforms();
-    }
-    
-    public void ResetLevelFromStart()
-{
-    CheckpointData.ResetAll(); // Em vez de Clear()
-    Time.timeScale = 1f;
-    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-}
 }

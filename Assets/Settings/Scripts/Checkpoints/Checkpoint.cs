@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
@@ -19,4 +19,4 @@ public class Checkpoint : MonoBehaviour
         Transform t = respawnPoint != null ? respawnPoint : transform;
         player.SaveCheckpoint(t.position, t.rotation);
     }
-}
+}*/
