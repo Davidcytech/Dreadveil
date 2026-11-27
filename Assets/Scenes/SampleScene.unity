@@ -4439,7 +4439,7 @@ MonoBehaviour:
   crochSight: 0.7
   visionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   playerInSightRange: 0
   loseSightTime: 3
   searchTime: 5
@@ -6503,7 +6503,7 @@ MonoBehaviour:
   crochSight: 0.7
   visionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   playerInSightRange: 0
   loseSightTime: 3
   searchTime: 5
@@ -12789,7 +12789,7 @@ MonoBehaviour:
   crochSight: 0.7
   visionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   playerInSightRange: 0
   loseSightTime: 3
   searchTime: 5
@@ -16749,7 +16749,7 @@ MonoBehaviour:
   crochSight: 0.7
   visionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   playerInSightRange: 0
   loseSightTime: 3
   searchTime: 5
@@ -26194,7 +26194,7 @@ MonoBehaviour:
   crochSight: 0.7
   visionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   playerInSightRange: 0
   loseSightTime: 3
   searchTime: 5
@@ -29052,7 +29052,7 @@ MonoBehaviour:
   crochSight: 0.7
   visionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 72
   playerInSightRange: 0
   loseSightTime: 3
   searchTime: 5
